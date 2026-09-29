@@ -1,75 +1,28 @@
-# React + TypeScript + Vite
+# AL-Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AL-Web is the web portal component of the 3rd Year Group Project "Agentic Lender". The web portal will act as an 
+interface for mortgage brokers and bank underwriting 
+officers to manage mortgage applications.
 
-Currently, two official plugins are available:
+## Technology
+- React (with Vite)
+- TypeScript 
+- Tailwinds CSS
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Overall Project
+This is a component of the overall project, the other 
+components include
+- AL-Mobile: Android application for borrowers
+- AL-Web: Web portal for mortgage brokers and bank officials
+- AL-AI: AI and machine learning services
+- AL-Core & Ledger: Database and blockchain services
 
-## React Compiler
+### Planned features
+- Loan application pipeline.
+- loan application details page.
+- ...
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+### How to run
+- clone the repo "git clone https://github.com/Emmet22/AL-Web.git"
+- ensure depenencies are installed "npm install"
+- start the dev server to run on localhost "npm run dev"
