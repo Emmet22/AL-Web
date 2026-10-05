@@ -9,7 +9,7 @@ officers to manage mortgage applications.
 - TypeScript 
 - Tailwinds CSS
 
-### Overall Project
+## The overall project
 This is a component of the overall project, the other 
 components include
 - AL-Mobile: Android application for borrowers
