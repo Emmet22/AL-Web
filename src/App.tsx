@@ -1,18 +1,19 @@
-import { BrowserRouter } from 'react-router'
+import { BrowserRouter, Routes, Route } from 'react-router'
 import Layout from './components/layout/Layout'
+
+import BrokerApplicationDetails from './pages/broker/BrokerApplicationDetails'
+import BrokerApplications from './pages/broker/BrokerApplications'
+import BrokerDashboard from './pages/broker/BrokerDashboard'
 
 function App() {
   return (
     <BrowserRouter>
-      {/* sample page for broker role */}
       <Layout role="broker">
-        <h1 className="text-2xl font-bold text-gray-900">
-          AL-Web
-        </h1>
-
-        <p className="mt-2 text-gray-600">
-          Application layout is working.
-        </p>
+        <Routes>
+          <Route path="/broker/dashboard" element={<BrokerDashboard />} />
+          <Route path="/broker/applications" element={<BrokerApplications />} />
+          <Route path="/broker/applications/:id" element={<BrokerApplicationDetails />} />
+        </Routes>
       </Layout>
     </BrowserRouter>
   )
