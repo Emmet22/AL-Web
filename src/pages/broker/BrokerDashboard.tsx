@@ -1,3 +1,5 @@
+import Card from "../../components/common/Card"
+
 function BrokerDashboard() {
   return (
     <div>
@@ -8,6 +10,12 @@ function BrokerDashboard() {
       <p className="mt-2 text-gray-600">
         Overview of mortgage applications.
       </p>
+
+      {/* testing card component */}
+      <Card>
+        <h2>Total Applications</h2>
+        <p>24</p>
+      </Card>
     </div>
   )
 }
