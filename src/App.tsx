@@ -1,53 +1,108 @@
-import { BrowserRouter, Routes, Route } from 'react-router'
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+} from 'react-router'
+
+import { AuthProvider } from './context/AuthContext'
+import ProtectedRoute from './components/auth/ProtectedRoute'
 import Layout from './components/layout/Layout'
 
-import BrokerApplicationDetails from './pages/broker/BrokerApplicationDetails'
-import BrokerApplications from './pages/broker/BrokerApplications'
+import Login from './pages/Login'
+
 import BrokerDashboard from './pages/broker/BrokerDashboard'
+import BrokerApplications from './pages/broker/BrokerApplications'
+import BrokerApplicationDetails from './pages/broker/BrokerApplicationDetails'
 
 import UnderwriterDashboard from './pages/underwriter/UnderwriterDashboard'
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route
-          path="/broker/dashboard"
-          element={
-            <Layout role="broker">
-              <BrokerDashboard />
-            </Layout>
-          }
-        />
+      <AuthProvider>
+        <Routes>
 
-        <Route
-          path="/broker/applications"
-          element={
-            <Layout role="broker">
-              <BrokerApplications />
-            </Layout>
-          }
-        />
+          {/* Login */}
+          <Route
+            path="/login"
+            element={<Login />}
+          />
 
-        <Route
-          path="/broker/applications/:id"
-          element={
-            <Layout role="broker">
-              <BrokerApplicationDetails />
-            </Layout>
-          }
-        />
+          {/* Broker Dashboard */}
+          <Route
+            path="/broker/dashboard"
+            element={
+              <ProtectedRoute allowedRole="broker">
+                <Layout role="broker">
+                  <BrokerDashboard />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/underwriter/pipeline"
-          element={
-            <Layout role="underwriter">
-              <UnderwriterDashboard />
-            </Layout>
-          }
-        />
-      </Routes>
+          {/* Broker Applications */}
+          <Route
+            path="/broker/applications"
+            element={
+              <ProtectedRoute allowedRole="broker">
+                <Layout role="broker">
+                  <BrokerApplications />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Broker Application Details */}
+          <Route
+            path="/broker/applications/:id"
+            element={
+              <ProtectedRoute allowedRole="broker">
+                <Layout role="broker">
+                  <BrokerApplicationDetails />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Underwriter Dashboard */}
+          <Route
+            path="/underwriter/pipeline"
+            element={
+              <ProtectedRoute allowedRole="underwriter">
+                <Layout role="underwriter">
+                  <UnderwriterDashboard />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Default */}
+          <Route
+            path="/"
+            element={
+              <Navigate
+                to="/login"
+                replace
+              />
+            }
+          />
+
+          {/* Unknown routes */}
+          <Route
+            path="*"
+            element={
+              <Navigate
+                to="/login"
+                replace
+              />
+            }
+          />
+
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   )
 }
+
 export default App
