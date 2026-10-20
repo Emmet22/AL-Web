@@ -1,4 +1,5 @@
 import Sidebar from './Sidebar'
+import UserMenu from './UserMenu'
 
 interface LayoutProps {
   role: 'broker' | 'underwriter'
@@ -16,17 +17,7 @@ function Layout({ role, children }: LayoutProps) {
             AL – Agentic Lender
           </h2>
 
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600">
-              {role === 'broker' ? 'Mortgage Broker' : 'Bank Underwriter'}
-            </span>
-
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-              <span className="text-sm font-medium text-gray-600">
-                U
-              </span>
-            </div>
-          </div>
+          <UserMenu />
         </header>
 
         <main className="p-8">
