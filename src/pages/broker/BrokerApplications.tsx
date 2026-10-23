@@ -44,36 +44,26 @@ function BrokerApplications() {
               className="w-full rounded-md border border-al-border bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-al-navy focus:ring-1 focus:ring-al-navy"
               defaultValue="all"
             >
-              <option value="all">
-                All statuses
-              </option>
-
-              <option value="Applied">
-                Applied
-              </option>
-
-              <option value="AI Deliberated">
-                AI Deliberated
-              </option>
-
+              <option value="all">All statuses</option>
+              <option value="Applied">Applied</option>
+              <option value="AI Deliberated">AI Deliberated</option>
               <option value="Underwriter Approved">
                 Underwriter Approved
               </option>
-
-              <option value="Funded">
-                Funded
-              </option>
-
-              <option value="Closed">
-                Closed
-              </option>
+              <option value="Funded">Funded</option>
+              <option value="Closed">Closed</option>
             </select>
           </div>
         </div>
       </div>
 
       <div className="mt-6">
-        <ApplicationTable showActions />
+        <ApplicationTable
+          clickableRows
+          getApplicationLink={(id) =>
+            `/broker/applications/${id}`
+          }
+        />
       </div>
     </div>
   )
