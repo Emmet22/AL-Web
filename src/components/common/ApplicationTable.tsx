@@ -18,41 +18,41 @@ function ApplicationTable({
   const navigate = useNavigate()
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+    <div className="overflow-hidden rounded-lg border border-al-border bg-white">
       {/* Desktop table */}
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-al-soft">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-al-muted">
                 Application
               </th>
 
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-al-muted">
                 Applicant
               </th>
 
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-al-muted">
                 Property
               </th>
 
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-al-muted">
                 Location
               </th>
 
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-al-muted">
                 Status
               </th>
 
               {showActions && (
-                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">
+                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wide text-al-muted">
                   Action
                 </th>
               )}
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-al-border">
             {sampleApplications.map((application) => {
               const rowContent = (
                 <>
@@ -80,7 +80,7 @@ function ApplicationTable({
                     <td className="px-6 py-4 text-right">
                       <Link
                         to={`/broker/applications/${application.id}`}
-                        className="text-sm font-medium text-gray-900 hover:underline"
+                        className="text-sm font-medium text-al-navy hover:underline"
                         onClick={(event) => event.stopPropagation()}
                       >
                         View
@@ -94,7 +94,7 @@ function ApplicationTable({
                 return (
                   <tr
                     key={application.id}
-                    className="cursor-pointer hover:bg-gray-50"
+                    className="cursor-pointer hover:bg-al-navy-light"
                     onClick={() => {
                       navigate(getApplicationLink(application.id))
                     }}
@@ -107,7 +107,7 @@ function ApplicationTable({
               return (
                 <tr
                   key={application.id}
-                  className="hover:bg-gray-50"
+                  className="hover:bg-al-soft"
                 >
                   {rowContent}
                 </tr>
@@ -118,7 +118,7 @@ function ApplicationTable({
       </div>
 
       {/* Mobile cards */}
-      <div className="divide-y divide-gray-200 md:hidden">
+      <div className="divide-y divide-al-border md:hidden">
         {sampleApplications.map((application) => {
           const card = (
             <>
@@ -138,7 +138,7 @@ function ApplicationTable({
 
               <div className="mt-4 grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-al-muted">
                     Property
                   </p>
 
@@ -148,7 +148,7 @@ function ApplicationTable({
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-al-muted">
                     Location
                   </p>
 
@@ -161,7 +161,7 @@ function ApplicationTable({
               {showActions && (
                 <Link
                   to={`/broker/applications/${application.id}`}
-                  className="mt-4 block text-sm font-medium text-gray-900 hover:underline"
+                  className="mt-4 block text-sm font-medium text-al-navy hover:underline"
                 >
                   View application
                 </Link>
@@ -174,7 +174,7 @@ function ApplicationTable({
               <Link
                 key={application.id}
                 to={getApplicationLink(application.id)}
-                className="block p-4 hover:bg-gray-50"
+                className="block p-4 hover:bg-al-navy-light"
               >
                 {card}
               </Link>

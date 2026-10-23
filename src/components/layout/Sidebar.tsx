@@ -29,13 +29,13 @@ function Sidebar({
             : '-translate-x-full'
         }`}
       >
-        <div className="flex h-16 items-center justify-between border-b border-gray-200 px-6">
+        <div className="flex h-16 items-center justify-between border-b border-al-border px-6">
           <div>
             <h1 className="text-xl font-bold text-gray-900">
               AL
             </h1>
 
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-al-muted">
               Agentic Lender
             </p>
           </div>
@@ -43,7 +43,7 @@ function Sidebar({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-md p-2 text-al-muted hover:bg-al-soft hover:text-gray-900"
             aria-label="Close navigation"
           >
             ✕
@@ -101,8 +101,8 @@ function MobileNavLink({
       className={({ isActive }) =>
         `block rounded-md px-4 py-3 text-sm font-medium ${
           isActive
-            ? 'bg-gray-100 text-gray-900'
-            : 'text-gray-700 hover:bg-gray-100'
+            ? 'bg-al-navy-light text-al-navy'
+            : 'text-gray-700 hover:bg-al-soft hover:text-gray-900'
         }`
       }
     >

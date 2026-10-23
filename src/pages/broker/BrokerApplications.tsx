@@ -8,12 +8,12 @@ function BrokerApplications() {
           Applications
         </h1>
 
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-al-muted">
           View and manage your mortgage applications.
         </p>
       </div>
 
-      <div className="mt-6 rounded-lg border border-gray-200 bg-white p-4 sm:p-6">
+      <div className="mt-6 rounded-lg border border-al-border bg-white p-4 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="flex-1">
             <label
@@ -27,7 +27,7 @@ function BrokerApplications() {
               id="application-search"
               type="text"
               placeholder="Search applications..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+              className="w-full rounded-md border border-al-border px-3 py-2 text-sm outline-none placeholder:text-al-muted focus:border-al-navy focus:ring-1 focus:ring-al-navy"
             />
           </div>
 
@@ -41,7 +41,7 @@ function BrokerApplications() {
 
             <select
               id="status-filter"
-              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+              className="w-full rounded-md border border-al-border bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-al-navy focus:ring-1 focus:ring-al-navy"
               defaultValue="all"
             >
               <option value="all">

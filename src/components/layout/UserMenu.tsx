@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
+
 import { useAuth } from '../../context/AuthContext'
 
 function UserMenu() {
@@ -25,35 +26,35 @@ function UserMenu() {
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
-        className="flex items-center gap-2 rounded-md px-2 py-1 hover:bg-gray-100 sm:gap-3"
+        className="flex items-center gap-2 rounded-md px-2 py-1 hover:bg-al-soft sm:gap-3"
       >
         <div className="hidden text-right sm:block">
           <p className="text-sm font-medium text-gray-900">
             {user.name}
           </p>
 
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-al-muted">
             {user.role === 'broker'
               ? 'Mortgage Broker'
               : 'Bank Underwriter'}
           </p>
         </div>
 
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
-          <span className="text-sm font-medium text-gray-600">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-al-navy-light">
+          <span className="text-sm font-medium text-al-navy">
             {initial}
           </span>
         </div>
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-gray-200 bg-white shadow-lg">
-          <div className="border-b border-gray-200 px-4 py-3">
+        <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-al-border bg-white shadow-lg">
+          <div className="border-b border-al-border px-4 py-3">
             <p className="text-sm font-medium text-gray-900">
               {user.name}
             </p>
 
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-al-muted">
               {user.email}
             </p>
           </div>
@@ -62,7 +63,7 @@ function UserMenu() {
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+              className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-al-soft hover:text-al-navy"
             >
               Log out
             </button>

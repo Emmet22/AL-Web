@@ -22,14 +22,14 @@ function UnderwriterDashboard() {
           Origination Pipeline
         </h1>
 
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-al-muted">
           Review and manage mortgage applications across the lending portfolio.
         </p>
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
         <Card>
-          <p className="text-sm font-medium text-gray-500">
+          <p className="text-sm font-medium text-al-muted">
             Total Applications
           </p>
 
@@ -39,7 +39,7 @@ function UnderwriterDashboard() {
         </Card>
 
         <Card>
-          <p className="text-sm font-medium text-gray-500">
+          <p className="text-sm font-medium text-al-muted">
             Awaiting Review
           </p>
 
@@ -49,7 +49,7 @@ function UnderwriterDashboard() {
         </Card>
 
         <Card>
-          <p className="text-sm font-medium text-gray-500">
+          <p className="text-sm font-medium text-al-muted">
             Approved
           </p>
 
@@ -65,7 +65,7 @@ function UnderwriterDashboard() {
             Application Pipeline
           </h2>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-al-muted">
             Applications across the lending portfolio.
           </p>
         </div>

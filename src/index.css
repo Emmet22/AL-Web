@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+/* Same colour theme as AL-Mobile */
+@theme {
+  --color-al-navy: #14336e;
+  --color-al-navy-light: #e6ecf7;
+  --color-al-page: #f6f7f9;
+  --color-al-border: #e2e5ea;
+  --color-al-muted: #6b7280;
+  --color-al-soft: #f1f3f6;
+  --color-al-success: #2e7d32;
+  --color-al-success-bg: #e8f5e9;
+  --color-al-error: #c62828;
+}

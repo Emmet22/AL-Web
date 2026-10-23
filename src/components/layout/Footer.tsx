@@ -1,7 +1,7 @@
 function Footer() {
   return (
-    <footer className="border-t border-gray-200 bg-white px-6 py-4">
-      <div className="flex flex-col items-center justify-between gap-2 text-xs text-gray-500 sm:flex-row">
+    <footer className="border-t border-al-border bg-white px-6 py-4">
+      <div className="flex flex-col items-center justify-between gap-2 text-xs text-al-muted sm:flex-row">
         <p>
           AL - Agentic Lender
         </p>

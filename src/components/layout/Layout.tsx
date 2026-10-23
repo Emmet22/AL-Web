@@ -14,9 +14,9 @@ function Layout({ role, children }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-al-page">
       {/* Desktop navigation */}
-      <header className="hidden h-16 items-center border-b border-gray-200 bg-white px-6 md:flex lg:px-8">
+      <header className="hidden h-16 items-center border-b border-al-border bg-white px-6 md:flex lg:px-8">
         {/* Brand */}
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-md bg-gray-900">
@@ -30,7 +30,7 @@ function Layout({ role, children }: LayoutProps) {
               Agentic Lender
             </p>
 
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-al-muted">
               AL-Web
             </p>
           </div>
@@ -62,12 +62,12 @@ function Layout({ role, children }: LayoutProps) {
       </header>
 
       {/* Mobile header */}
-      <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 md:hidden">
+      <header className="flex h-16 items-center justify-between border-b border-al-border bg-white px-4 md:hidden">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setIsSidebarOpen(true)}
-            className="rounded-md p-2 text-gray-600 hover:bg-gray-100"
+            className="rounded-md p-2 text-gray-700 hover:bg-al-soft"
             aria-label="Open navigation"
           >
             ☰
@@ -78,7 +78,7 @@ function Layout({ role, children }: LayoutProps) {
               Agentic Lender
             </p>
 
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-al-muted">
               AL-Web
             </p>
           </div>
@@ -121,8 +121,8 @@ function DesktopNavLink({
       className={({ isActive }) =>
         `rounded-md px-4 py-2 text-sm font-medium transition-colors ${
           isActive
-            ? 'bg-gray-100 text-gray-900'
-            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            ? 'bg-al-navy-light text-al-navy'
+            : 'text-al-muted hover:bg-al-soft hover:text-gray-900'
         }`
       }
     >

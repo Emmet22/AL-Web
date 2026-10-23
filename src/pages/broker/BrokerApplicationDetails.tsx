@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router'
+
 import StatusBadge from '../../components/common/StatusBadge'
 import { sampleApplications } from '../../data/sampleApplications'
 
@@ -16,13 +17,13 @@ function BrokerApplicationDetails() {
           Application not found
         </h1>
 
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-al-muted">
           The requested application could not be found.
         </p>
 
         <Link
           to="/broker/applications"
-          className="mt-4 inline-block text-sm font-medium text-gray-900 hover:underline"
+          className="mt-4 inline-block text-sm font-medium text-al-navy hover:underline"
         >
           Back to applications
         </Link>
@@ -34,14 +35,14 @@ function BrokerApplicationDetails() {
     <div>
       <Link
         to="/broker/applications"
-        className="text-sm font-medium text-gray-600 hover:text-gray-900"
+        className="text-sm font-medium text-al-navy hover:underline"
       >
         ← Back to applications
       </Link>
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-500">
+          <p className="text-sm font-medium text-al-muted">
             {application.id}
           </p>
 
@@ -49,7 +50,7 @@ function BrokerApplicationDetails() {
             {application.applicant}
           </h1>
 
-          <p className="mt-1 text-gray-600">
+          <p className="mt-1 text-al-muted">
             {application.location}
           </p>
         </div>
@@ -58,7 +59,7 @@ function BrokerApplicationDetails() {
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-lg border border-gray-200 bg-white p-6">
+        <section className="rounded-lg border border-al-border bg-white p-6">
           <h2 className="text-lg font-semibold text-gray-900">
             Applicant
           </h2>
@@ -91,7 +92,7 @@ function BrokerApplicationDetails() {
           </div>
         </section>
 
-        <section className="rounded-lg border border-gray-200 bg-white p-6">
+        <section className="rounded-lg border border-al-border bg-white p-6">
           <h2 className="text-lg font-semibold text-gray-900">
             Property
           </h2>
@@ -116,11 +117,10 @@ function BrokerApplicationDetails() {
               label="BER rating"
               value={application.berRating}
             />
-
           </div>
         </section>
 
-        <section className="rounded-lg border border-gray-200 bg-white p-6 lg:col-span-2">
+        <section className="rounded-lg border border-al-border bg-white p-6 lg:col-span-2">
           <h2 className="text-lg font-semibold text-gray-900">
             Loan
           </h2>
@@ -149,12 +149,12 @@ function BrokerApplicationDetails() {
         </section>
       </div>
 
-      <div className="mt-8 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6">
+      <div className="mt-8 rounded-lg border border-dashed border-al-border bg-al-soft p-6">
         <h2 className="text-lg font-semibold text-gray-900">
           Application assessment
         </h2>
 
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-al-muted">
           Detailed application assessment and AI results will be
           implemented in a later sprint.
         </p>
@@ -174,7 +174,7 @@ function DetailItem({
 }: DetailItemProps) {
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+      <p className="text-xs font-medium uppercase tracking-wide text-al-muted">
         {label}
       </p>
 

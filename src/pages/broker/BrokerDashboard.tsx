@@ -24,14 +24,14 @@ function BrokerDashboard() {
           Broker Dashboard
         </h1>
 
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-al-muted">
           Overview of your mortgage applications.
         </p>
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
         <Card>
-          <p className="text-sm font-medium text-gray-500">
+          <p className="text-sm font-medium text-al-muted">
             Total Applications
           </p>
 
@@ -41,7 +41,7 @@ function BrokerDashboard() {
         </Card>
 
         <Card>
-          <p className="text-sm font-medium text-gray-500">
+          <p className="text-sm font-medium text-al-muted">
             Awaiting Review
           </p>
 
@@ -51,7 +51,7 @@ function BrokerDashboard() {
         </Card>
 
         <Card>
-          <p className="text-sm font-medium text-gray-500">
+          <p className="text-sm font-medium text-al-muted">
             Approved
           </p>
 
@@ -68,14 +68,14 @@ function BrokerDashboard() {
               Recent Applications
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-al-muted">
               Recently submitted mortgage applications.
             </p>
           </div>
 
           <Link
             to="/broker/applications"
-            className="text-sm font-medium text-gray-900 hover:underline"
+            className="text-sm font-medium text-al-navy hover:underline"
           >
             View all applications
           </Link>
