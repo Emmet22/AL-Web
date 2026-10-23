@@ -1,3 +1,6 @@
+import { useState } from 'react'
+import { NavLink } from 'react-router'
+
 import Sidebar from './Sidebar'
 import UserMenu from './UserMenu'
 import Footer from './Footer'
@@ -8,19 +11,91 @@ interface LayoutProps {
 }
 
 function Layout({ role, children }: LayoutProps) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <Sidebar role={role} />
+    <div className="min-h-screen bg-gray-100">
+      {/* Desktop navigation */}
+      <header className="hidden h-16 items-center border-b border-gray-200 bg-white px-6 md:flex lg:px-8">
+        {/* Brand */}
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-gray-900">
+            <span className="text-sm font-bold text-white">
+              AL
+            </span>
+          </div>
 
-      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6 lg:px-8">
-          <h2 className="text-base font-semibold text-gray-900 sm:text-lg">
-            AL – Agentic Lender
-          </h2>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">
+              Agentic Lender
+            </p>
 
+            <p className="text-xs text-gray-500">
+              AL-Web
+            </p>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="ml-8 flex h-full items-center gap-1">
+          {role === 'broker' ? (
+            <>
+              <DesktopNavLink to="/broker/dashboard">
+                Dashboard
+              </DesktopNavLink>
+
+              <DesktopNavLink to="/broker/applications">
+                Applications
+              </DesktopNavLink>
+            </>
+          ) : (
+            <DesktopNavLink to="/underwriter/pipeline">
+              Pipeline
+            </DesktopNavLink>
+          )}
+        </nav>
+
+        {/* User menu */}
+        <div className="ml-auto">
           <UserMenu />
-        </header>
+        </div>
+      </header>
 
+      {/* Mobile header */}
+      <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 md:hidden">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setIsSidebarOpen(true)}
+            className="rounded-md p-2 text-gray-600 hover:bg-gray-100"
+            aria-label="Open navigation"
+          >
+            ☰
+          </button>
+
+          <div>
+            <p className="text-sm font-semibold text-gray-900">
+              Agentic Lender
+            </p>
+
+            <p className="text-xs text-gray-500">
+              AL-Web
+            </p>
+          </div>
+        </div>
+
+        <UserMenu />
+      </header>
+
+      {/* Mobile navigation */}
+      <Sidebar
+        role={role}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
+
+      {/* Page content */}
+      <div className="flex min-h-[calc(100vh-4rem)] flex-col">
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
           {children}
         </main>
@@ -28,6 +103,31 @@ function Layout({ role, children }: LayoutProps) {
         <Footer />
       </div>
     </div>
+  )
+}
+
+interface DesktopNavLinkProps {
+  to: string
+  children: React.ReactNode
+}
+
+function DesktopNavLink({
+  to,
+  children,
+}: DesktopNavLinkProps) {
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        `rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+          isActive
+            ? 'bg-gray-100 text-gray-900'
+            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+        }`
+      }
+    >
+      {children}
+    </NavLink>
   )
 }
 
