@@ -1,31 +1,67 @@
+import {
+  useEffect,
+  useState,
+  type FormEvent,
+} from 'react'
+
 import { useNavigate } from 'react-router'
 
 import { useAuth } from '../context/AuthContext'
 
 function Login() {
   const navigate = useNavigate()
-  const { setUser } = useAuth()
+  const { user, loading, login } = useAuth()
 
-  function loginAsBroker() {
-    setUser({
-      id: 'broker-demo',
-      name: 'Demo Broker',
-      email: 'broker@demo.ie',
-      role: 'broker',
-    })
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] =
+    useState(false)
 
-    navigate('/broker/dashboard')
-  }
+  useEffect(() => {
+    if (loading || !user) {
+      return
+    }
 
-  function loginAsUnderwriter() {
-    setUser({
-      id: 'underwriter-demo',
-      name: 'Demo Underwriter',
-      email: 'underwriter@demo.ie',
-      role: 'underwriter',
-    })
+    if (user.role === 'broker') {
+      navigate('/broker/dashboard', {
+        replace: true,
+      })
+    } else {
+      navigate('/underwriter/pipeline', {
+        replace: true,
+      })
+    }
+  }, [user, loading, navigate])
 
-    navigate('/underwriter/pipeline')
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+
+    setError('')
+    setIsSubmitting(true)
+
+    try {
+      const authenticatedUser = await login(
+        email,
+        password,
+      )
+
+      if (authenticatedUser.role === 'broker') {
+        navigate('/broker/dashboard')
+      } else {
+        navigate('/underwriter/pipeline')
+      }
+    } catch (error) {
+      console.error('Login failed:', error)
+
+      setError(
+        'Unable to sign in. Check your email and password.',
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -47,31 +83,72 @@ function Login() {
           </h1>
 
           <p className="mt-2 text-sm text-al-muted">
-            Select a demo account to continue.
+            Sign in to access the AL-Web portal.
           </p>
         </div>
 
-        <div className="space-y-3">
-          <button
-            type="button"
-            onClick={loginAsBroker}
-            className="w-full rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800"
-          >
-            Continue as Mortgage Broker
-          </button>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4"
+        >
+          <div>
+            <label
+              htmlFor="email"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
+              Email
+            </label>
+
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) =>
+                setEmail(event.target.value)
+              }
+              required
+              autoComplete="email"
+              className="w-full rounded-md border border-al-border px-3 py-2.5 text-sm outline-none focus:border-al-navy focus:ring-1 focus:ring-al-navy"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="password"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
+              Password
+            </label>
+
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(event) =>
+                setPassword(event.target.value)
+              }
+              required
+              autoComplete="current-password"
+              className="w-full rounded-md border border-al-border px-3 py-2.5 text-sm outline-none focus:border-al-navy focus:ring-1 focus:ring-al-navy"
+            />
+          </div>
+
+          {error && (
+            <div className="rounded-md bg-red-50 p-3 text-sm text-al-error">
+              {error}
+            </div>
+          )}
 
           <button
-            type="button"
-            onClick={loginAsUnderwriter}
-            className="w-full rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Continue as Bank Underwriter
+            {isSubmitting
+              ? 'Signing in...'
+              : 'Sign in'}
           </button>
-        </div>
-
-        <p className="mt-6 text-center text-xs text-al-muted">
-          Demo authentication for AL-Web development.
-        </p>
+        </form>
       </div>
     </div>
   )
