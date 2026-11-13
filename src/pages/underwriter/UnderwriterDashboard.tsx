@@ -1,79 +1,240 @@
+import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router'
 import Card from '../../components/common/Card'
 import ApplicationTable from '../../components/common/ApplicationTable'
-import { sampleApplications } from '../../data/sampleApplications'
+import StatusBadge from '../../components/common/StatusBadge'
+import { getApplications } from '../../services/applicationService'
+import type {
+  ApplicationStatus,
+  SampleApplication,
+} from '../../data/sampleApplications'
 
-function UnderwriterDashboard() {
-  const totalApplications = sampleApplications.length
+const pipelineStatuses: ApplicationStatus[] = [
+  'Applied',
+  'AI Deliberated',
+  'Underwriter Approved',
+  'Funded',
+  'Closed',
+]
 
-  const awaitingReview = sampleApplications.filter(
-    (application) =>
-      application.status === 'Applied'
-  ).length
+export default function UnderwriterDashboard() {
+  const [applications, setApplications] =
+    useState<SampleApplication[]>([])
 
-  const approvedApplications = sampleApplications.filter(
-    (application) =>
-      application.status === 'Underwriter Approved'
-  ).length
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function loadApplications() {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const result = await getApplications()
+        setApplications(result)
+      } catch {
+        setError('Unable to load applications. Please try again.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadApplications()
+  }, [])
+
+  const summary = useMemo(() => {
+    return {
+      total: applications.length,
+      applied: applications.filter(
+        app => app.status === 'Applied'
+      ).length,
+      aiDeliberated: applications.filter(
+        app => app.status === 'AI Deliberated'
+      ).length,
+      approved: applications.filter(
+        app => app.status === 'Underwriter Approved'
+      ).length,
+      funded: applications.filter(
+        app => app.status === 'Funded'
+      ).length,
+    }
+  }, [applications])
+
+  const groupedApplications = useMemo(() => {
+    return pipelineStatuses.map(status => ({
+      status,
+      applications: applications.filter(
+        app => app.status === status
+      ),
+    }))
+  }, [applications])
+
+  if (loading) {
+    return (
+      <div className="py-12 text-center text-gray-500">
+        Loading underwriting pipeline...
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-lg border border-red-200 bg-red-50 p-6">
+        <p className="font-medium text-red-800">{error}</p>
+      </div>
+    )
+  }
 
   return (
-    <div>
+    <div className="space-y-8">
+
+      {/* Page heading */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
-          Origination Pipeline
+          Underwriting Pipeline
         </h1>
 
-        <p className="mt-2 text-al-muted">
-          Review and manage mortgage applications across the lending portfolio.
+        <p className="mt-1 text-sm text-gray-500">
+          Monitor and review loan applications across the lending process.
         </p>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
-        <Card>
-          <p className="text-sm font-medium text-al-muted">
-            Total Applications
-          </p>
+      {/* Summary cards */}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
 
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {totalApplications}
-          </p>
-        </Card>
+        <SummaryCard
+          title="Total Applications"
+          value={summary.total}
+        />
 
-        <Card>
-          <p className="text-sm font-medium text-al-muted">
-            Awaiting Review
-          </p>
+        <SummaryCard
+          title="Applied"
+          value={summary.applied}
+        />
 
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {awaitingReview}
-          </p>
-        </Card>
+        <SummaryCard
+          title="AI Deliberated"
+          value={summary.aiDeliberated}
+        />
 
-        <Card>
-          <p className="text-sm font-medium text-al-muted">
-            Approved
-          </p>
+        <SummaryCard
+          title="Approved"
+          value={summary.approved}
+        />
 
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {approvedApplications}
-          </p>
-        </Card>
+        <SummaryCard
+          title="Funded"
+          value={summary.funded}
+        />
+
       </div>
 
-      <div className="mt-8">
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Application Pipeline
+      {/* Application pipeline */}
+      <div className="space-y-6">
+
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Applications by Status
           </h2>
 
-          <p className="mt-1 text-sm text-al-muted">
-            Applications across the lending portfolio.
+          <p className="mt-1 text-sm text-gray-500">
+            Select an application to review its details.
           </p>
         </div>
 
-        <ApplicationTable />
+        {applications.length === 0 ? (
+          <Card>
+            <p className="py-6 text-center text-sm text-gray-500">
+              No applications are currently available.
+            </p>
+          </Card>
+        ) : (
+          groupedApplications.map(group => (
+            <Card key={group.status}>
+
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <StatusBadge status={group.status} />
+
+                  <span className="text-sm text-gray-500">
+                    {group.applications.length} applications
+                  </span>
+                </div>
+              </div>
+
+              {group.applications.length === 0 ? (
+                <p className="py-4 text-sm text-gray-400">
+                  No applications at this stage.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {group.applications.map(application => (
+                    <Link
+                      key={application.id}
+                      to={`/underwriter/applications/${application.id}`}
+                      className="flex flex-col justify-between gap-3 rounded-lg border border-gray-100 p-4 transition hover:border-gray-300 hover:bg-gray-50 sm:flex-row sm:items-center"
+                    >
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {application.applicant}
+                        </p>
+
+                        <p className="mt-1 text-sm text-gray-500">
+                          {application.id} · {application.property}
+                        </p>
+                      </div>
+
+                      <div className="text-left sm:text-right">
+                        <p className="font-medium text-gray-900">
+                          €{application.requestedMortgage.toLocaleString('en-IE')}
+                        </p>
+
+                        <p className="mt-1 text-xs text-gray-500">
+                          Requested mortgage
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+
+            </Card>
+          ))
+        )}
+
       </div>
+
+      {/* All applications */}
+      <section>
+        <h2 className="mb-4 text-xl font-semibold text-gray-900">
+          All Applications
+        </h2>
+
+        <ApplicationTable
+          applications={applications}
+          clickableRows
+          getApplicationLink={id => `/underwriter/applications/${id}`}
+        />
+      </section>
+
     </div>
   )
 }
 
-export default UnderwriterDashboard
+function SummaryCard({
+  title,
+  value,
+}: {
+  title: string
+  value: number
+}) {
+  return (
+    <Card>
+      <p className="text-sm text-gray-500">{title}</p>
+
+      <p className="mt-2 text-2xl font-bold text-gray-900">
+        {value}
+      </p>
+    </Card>
+  )
+}

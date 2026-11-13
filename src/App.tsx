@@ -16,6 +16,7 @@ import BrokerApplications from './pages/broker/BrokerApplications'
 import BrokerApplicationDetails from './pages/broker/BrokerApplicationDetails'
 
 import UnderwriterDashboard from './pages/underwriter/UnderwriterDashboard'
+import UnderwriterApplicationDetails from './pages/underwriter/UnderwriterApplicationDetails'
 
 function App() {
   return (
@@ -72,6 +73,17 @@ function App() {
               <ProtectedRoute allowedRole="underwriter">
                 <Layout role="underwriter">
                   <UnderwriterDashboard />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/underwriter/applications/:id"
+            element={
+              <ProtectedRoute allowedRole="underwriter">
+                <Layout role="underwriter">
+                  <UnderwriterApplicationDetails />
                 </Layout>
               </ProtectedRoute>
             }

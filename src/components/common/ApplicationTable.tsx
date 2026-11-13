@@ -4,18 +4,36 @@ import { sampleApplications } from '../../data/sampleApplications'
 
 import StatusBadge from './StatusBadge'
 
+type Application = (typeof sampleApplications)[number]
+
 interface ApplicationTableProps {
+  applications?: Application[]
   showActions?: boolean
   clickableRows?: boolean
   getApplicationLink?: (id: string) => string
 }
 
 function ApplicationTable({
+  applications = sampleApplications,
   showActions = false,
   clickableRows = false,
   getApplicationLink,
 }: ApplicationTableProps) {
   const navigate = useNavigate()
+
+  if (applications.length === 0) {
+    return (
+      <div className="rounded-lg border border-al-border bg-white px-6 py-12 text-center">
+        <h3 className="text-lg font-semibold text-gray-900">
+          No applications found
+        </h3>
+
+        <p className="mt-2 text-sm text-al-muted">
+          Try adjusting your search or filters.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="overflow-hidden rounded-lg border border-al-border bg-white">
@@ -53,7 +71,7 @@ function ApplicationTable({
           </thead>
 
           <tbody className="divide-y divide-al-border">
-            {sampleApplications.map((application) => {
+            {applications.map((application) => {
               const rowContent = (
                 <>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
@@ -119,7 +137,7 @@ function ApplicationTable({
 
       {/* Mobile cards */}
       <div className="divide-y divide-al-border md:hidden">
-        {sampleApplications.map((application) => {
+        {applications.map((application) => {
           const card = (
             <>
               <div className="flex items-start justify-between gap-4">
