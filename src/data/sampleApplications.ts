@@ -7,6 +7,7 @@ export type ApplicationStatus =
 
 export interface SampleApplication {
   id: string
+  referenceNumber?: string
   applicant: string
   location: string
   property: string
@@ -23,7 +24,7 @@ export interface SampleApplication {
   requestedMortgage: number
   loanTerm: number
   askingPrice: number
-  mlValuation: number
+  mlValuation?: number
 }
 
 export const sampleApplications: SampleApplication[] = [

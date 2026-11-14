@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router'
+
+import { useAuth } from '../../context/AuthContext'
+import { useApplications } from '../../hooks/useApplications'
+
 import Card from '../../components/common/Card'
 import ApplicationTable from '../../components/common/ApplicationTable'
 import StatusBadge from '../../components/common/StatusBadge'
-import { getApplications } from '../../services/applicationService'
-import type {
-  ApplicationStatus,
-  SampleApplication,
-} from '../../data/sampleApplications'
+
+import type { ApplicationStatus } from '../../data/sampleApplications'
 
 const pipelineStatuses: ApplicationStatus[] = [
   'Applied',
@@ -17,57 +18,50 @@ const pipelineStatuses: ApplicationStatus[] = [
   'Closed',
 ]
 
+const euro = new Intl.NumberFormat('en-IE', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 0,
+})
+
 export default function UnderwriterDashboard() {
-  const [applications, setApplications] =
-    useState<SampleApplication[]>([])
+  const { user } = useAuth()
 
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const {
+    applications,
+    loading,
+    error,
+  } = useApplications(user?.role, user?.id)
 
-  useEffect(() => {
-    async function loadApplications() {
-      try {
-        setLoading(true)
-        setError(null)
+  const summary = useMemo(() => ({
+    total: applications.length,
 
-        const result = await getApplications()
-        setApplications(result)
-      } catch {
-        setError('Unable to load applications. Please try again.')
-      } finally {
-        setLoading(false)
-      }
-    }
+    applied: applications.filter(
+      app => app.status === 'Applied'
+    ).length,
 
-    loadApplications()
-  }, [])
+    aiDeliberated: applications.filter(
+      app => app.status === 'AI Deliberated'
+    ).length,
 
-  const summary = useMemo(() => {
-    return {
-      total: applications.length,
-      applied: applications.filter(
-        app => app.status === 'Applied'
-      ).length,
-      aiDeliberated: applications.filter(
-        app => app.status === 'AI Deliberated'
-      ).length,
-      approved: applications.filter(
-        app => app.status === 'Underwriter Approved'
-      ).length,
-      funded: applications.filter(
-        app => app.status === 'Funded'
-      ).length,
-    }
-  }, [applications])
+    approved: applications.filter(
+      app => app.status === 'Underwriter Approved'
+    ).length,
 
-  const groupedApplications = useMemo(() => {
-    return pipelineStatuses.map(status => ({
+    funded: applications.filter(
+      app => app.status === 'Funded'
+    ).length,
+
+  }), [applications])
+
+  const groupedApplications = useMemo(() =>
+    pipelineStatuses.map(status => ({
       status,
       applications: applications.filter(
         app => app.status === status
       ),
     }))
-  }, [applications])
+  , [applications])
 
   if (loading) {
     return (
@@ -80,7 +74,9 @@ export default function UnderwriterDashboard() {
   if (error) {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-6">
-        <p className="font-medium text-red-800">{error}</p>
+        <p className="font-medium text-red-800">
+          Unable to load applications: {error}
+        </p>
       </div>
     )
   }
@@ -101,32 +97,11 @@ export default function UnderwriterDashboard() {
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-
-        <SummaryCard
-          title="Total Applications"
-          value={summary.total}
-        />
-
-        <SummaryCard
-          title="Applied"
-          value={summary.applied}
-        />
-
-        <SummaryCard
-          title="AI Deliberated"
-          value={summary.aiDeliberated}
-        />
-
-        <SummaryCard
-          title="Approved"
-          value={summary.approved}
-        />
-
-        <SummaryCard
-          title="Funded"
-          value={summary.funded}
-        />
-
+        <SummaryCard title="Total Applications" value={summary.total} />
+        <SummaryCard title="Applied" value={summary.applied} />
+        <SummaryCard title="AI Deliberated" value={summary.aiDeliberated} />
+        <SummaryCard title="Approved" value={summary.approved} />
+        <SummaryCard title="Funded" value={summary.funded} />
       </div>
 
       {/* Application pipeline */}
@@ -186,7 +161,7 @@ export default function UnderwriterDashboard() {
 
                       <div className="text-left sm:text-right">
                         <p className="font-medium text-gray-900">
-                          €{application.requestedMortgage.toLocaleString('en-IE')}
+                          {euro.format(application.requestedMortgage)}
                         </p>
 
                         <p className="mt-1 text-xs text-gray-500">
@@ -213,7 +188,9 @@ export default function UnderwriterDashboard() {
         <ApplicationTable
           applications={applications}
           clickableRows
-          getApplicationLink={id => `/underwriter/applications/${id}`}
+          getApplicationLink={id =>
+            `/underwriter/applications/${id}`
+          }
         />
       </section>
 
@@ -230,7 +207,9 @@ function SummaryCard({
 }) {
   return (
     <Card>
-      <p className="text-sm text-gray-500">{title}</p>
+      <p className="text-sm text-gray-500">
+        {title}
+      </p>
 
       <p className="mt-2 text-2xl font-bold text-gray-900">
         {value}

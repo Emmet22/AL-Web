@@ -1,32 +1,80 @@
 import {
-  sampleApplications,
-  type SampleApplication,
-} from '../data/sampleApplications'
+  doc,
+  getDoc,
+  type DocumentData,
+} from 'firebase/firestore'
 
-import type { ApplicationStatus } from '../data/sampleApplications'
+import { db } from './firebase'
 
-export async function getApplications(): Promise<SampleApplication[]> {
-  return [...sampleApplications]
+import type {
+  Application,
+  FirestoreApplication,
+} from '../types/application'
+
+// Convert a Firestore document into the structure
+// used by the AL-Web interface.
+export function mapApplication(
+  id: string,
+  data: DocumentData
+): Application {
+
+  const application: FirestoreApplication = {
+    id,
+    ...data,
+  } as FirestoreApplication
+
+  return {
+    id: application.id,
+
+    referenceNumber: application.referenceNumber,
+
+    applicant: application.applicantName ?? 'Unknown Applicant',
+
+    location: [
+      application.area,
+      application.county,
+    ].filter(Boolean).join(', '),
+
+    property: application.propertyAddress,
+
+    status: application.status,
+
+    propertyType: application.propertyType,
+
+    propertySize: application.propertySize,
+
+    berRating: application.berRating,
+
+    requestedMortgage: application.loanAmount,
+
+    grossIncome: application.grossIncome,
+
+    existingDebt: application.existingDebt,
+
+    deposit: application.deposit,
+
+    loanTerm: application.loanTerm,
+
+    askingPrice: application.askingPrice,
+
+    // AI valuation may not exist yet.
+    // Do not substitute propertyValue for it.
+    mlValuation: application.valuation,
+  }
 }
 
+// Retrieve one application using its Firestore document ID.
 export async function getApplicationById(
   id: string
-): Promise<SampleApplication | undefined> {
-  return sampleApplications.find(
-    application => application.id === id
-  )
-}
+): Promise<Application | undefined> {
 
-export async function getApplicationsByStatus(
-  status: ApplicationStatus | 'all'
-): Promise<SampleApplication[]> {
-  const applications = await getApplications()
+  const applicationRef = doc(db, 'applications', id)
 
-  if (status === 'all') {
-    return applications
+  const snapshot = await getDoc(applicationRef)
+
+  if (!snapshot.exists()) {
+    return undefined
   }
 
-  return applications.filter(
-    application => application.status === status
-  )
+  return mapApplication(snapshot.id, snapshot.data())
 }

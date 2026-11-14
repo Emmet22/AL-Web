@@ -1,16 +1,17 @@
-import type { SampleApplication } from '../../data/sampleApplications'
+import type { Application } from '../../types/application'
 
 import {
   calculateLoanAssessment,
 } from '../../utils/loanCalculations'
 
 interface FinancialAssessmentProps {
-  application: SampleApplication
+  application: Application
 }
 
 function FinancialAssessment({
   application,
 }: FinancialAssessmentProps) {
+
   const assessment = calculateLoanAssessment(application)
 
   function formatCurrency(value: number) {
@@ -22,6 +23,7 @@ function FinancialAssessment({
   }
 
   function getLTVStatus(ltv: number) {
+
     if (ltv <= 80) {
       return {
         label: 'Lower LTV',
@@ -46,6 +48,7 @@ function FinancialAssessment({
 
   return (
     <section className="rounded-lg border border-al-border bg-white p-6">
+
       <div>
         <h2 className="text-lg font-semibold text-gray-900">
           Financial Assessment
@@ -61,6 +64,7 @@ function FinancialAssessment({
 
         {/* LTV */}
         <div className="rounded-lg border border-al-border p-4">
+
           <p className="text-sm text-al-muted">
             Loan-to-Value (LTV)
           </p>
@@ -74,10 +78,12 @@ function FinancialAssessment({
           >
             {ltvStatus.label}
           </span>
+
         </div>
 
         {/* LTI */}
         <div className="rounded-lg border border-al-border p-4">
+
           <p className="text-sm text-al-muted">
             Loan-to-Income (LTI)
           </p>
@@ -89,10 +95,12 @@ function FinancialAssessment({
           <p className="mt-3 text-xs text-al-muted">
             Mortgage relative to gross annual income.
           </p>
+
         </div>
 
         {/* Equity */}
         <div className="rounded-lg border border-al-border p-4">
+
           <p className="text-sm text-al-muted">
             Estimated Equity
           </p>
@@ -104,16 +112,20 @@ function FinancialAssessment({
           <p className="mt-3 text-xs text-al-muted">
             Estimated property value minus mortgage.
           </p>
+
         </div>
+
       </div>
 
       {/* Property valuation */}
       <div className="mt-6 border-t border-al-border pt-5">
+
         <h3 className="text-sm font-semibold text-gray-900">
           Property Valuation
         </h3>
 
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+
           <div>
             <p className="text-xs text-al-muted">
               Asking Price
@@ -130,7 +142,9 @@ function FinancialAssessment({
             </p>
 
             <p className="mt-1 font-medium text-gray-900">
-              {formatCurrency(application.mlValuation)}
+              {application.mlValuation !== undefined
+                ? formatCurrency(application.mlValuation)
+                : 'Not available'}
             </p>
           </div>
 
@@ -143,16 +157,19 @@ function FinancialAssessment({
               {formatCurrency(assessment.propertyValue)}
             </p>
           </div>
+
         </div>
       </div>
 
       {/* Financial information */}
       <div className="mt-6 border-t border-al-border pt-5">
+
         <h3 className="text-sm font-semibold text-gray-900">
           Applicant Financial Information
         </h3>
 
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+
           <div>
             <p className="text-xs text-al-muted">
               Gross Annual Income
@@ -182,6 +199,7 @@ function FinancialAssessment({
               {formatCurrency(application.deposit)}
             </p>
           </div>
+
         </div>
       </div>
 
@@ -190,6 +208,7 @@ function FinancialAssessment({
         available application data. They do not represent a
         final lending decision.
       </p>
+
     </section>
   )
 }

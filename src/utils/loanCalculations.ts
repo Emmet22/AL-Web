@@ -1,4 +1,4 @@
-import type { SampleApplication } from '../data/sampleApplications'
+import type { Application } from '../types/application'
 
 export interface LoanAssessment {
   loanToValue: number
@@ -8,28 +8,46 @@ export interface LoanAssessment {
 }
 
 /**
+ * Gets the property value used for the assessment.
+ *
+ * Uses the lower of asking price and ML valuation.
+ * Falls back to asking price if no ML valuation exists.
+ */
+function getAssessmentPropertyValue(
+  application: Application
+): number {
+
+  if (
+    application.mlValuation === undefined ||
+    application.mlValuation <= 0
+  ) {
+    return application.askingPrice
+  }
+
+  return Math.min(
+    application.askingPrice,
+    application.mlValuation
+  )
+}
+
+/**
  * Calculates the Loan-to-Value ratio.
  *
  * LTV = Mortgage Amount / Property Value × 100
- *
- * Uses the lower of the asking price and ML valuation
- * as the property value for this preliminary assessment.
  */
 export function calculateLTV(
-  application: SampleApplication,
+  application: Application
 ): number {
-  const propertyValue = Math.min(
-    application.askingPrice,
-    application.mlValuation,
-  )
+
+  const propertyValue = getAssessmentPropertyValue(application)
 
   if (propertyValue <= 0) {
     return 0
   }
 
   return (
-    (application.requestedMortgage / propertyValue) * 100
-  )
+    application.requestedMortgage / propertyValue
+  ) * 100
 }
 
 /**
@@ -38,8 +56,9 @@ export function calculateLTV(
  * LTI = Mortgage Amount / Gross Annual Income
  */
 export function calculateLTI(
-  application: SampleApplication,
+  application: Application
 ): number {
+
   if (application.grossIncome <= 0) {
     return 0
   }
@@ -53,12 +72,10 @@ export function calculateLTI(
  * Calculates the estimated property equity.
  */
 export function calculateEquity(
-  application: SampleApplication,
+  application: Application
 ): number {
-  const propertyValue = Math.min(
-    application.askingPrice,
-    application.mlValuation,
-  )
+
+  const propertyValue = getAssessmentPropertyValue(application)
 
   return propertyValue - application.requestedMortgage
 }
@@ -67,17 +84,18 @@ export function calculateEquity(
  * Returns all preliminary loan assessment metrics.
  */
 export function calculateLoanAssessment(
-  application: SampleApplication,
+  application: Application
 ): LoanAssessment {
-  const propertyValue = Math.min(
-    application.askingPrice,
-    application.mlValuation,
-  )
+
+  const propertyValue = getAssessmentPropertyValue(application)
 
   return {
     loanToValue: calculateLTV(application),
+
     loanToIncome: calculateLTI(application),
+
     propertyValue,
+
     equity: calculateEquity(application),
   }
 }
