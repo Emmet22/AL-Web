@@ -5,6 +5,7 @@ export default function UnderwriterApplicationDetails() {
     <ApplicationDetails
       backPath="/underwriter/pipeline"
       backLabel="Back to Pipeline"
+      showWorkflowActions={true}
     />
   )
 }

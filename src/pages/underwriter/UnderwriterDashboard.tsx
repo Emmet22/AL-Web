@@ -144,12 +144,15 @@ export default function UnderwriterDashboard() {
               ) : (
                 <div className="space-y-3">
                   {group.applications.map(application => (
-                    <Link
+                    <div
                       key={application.id}
-                      to={`/underwriter/applications/${application.id}`}
-                      className="flex flex-col justify-between gap-3 rounded-lg border border-gray-100 p-4 transition hover:border-gray-300 hover:bg-gray-50 sm:flex-row sm:items-center"
+                      className="flex flex-col justify-between gap-4 rounded-lg border border-gray-100 p-4 transition hover:border-gray-300 hover:bg-gray-50 sm:flex-row sm:items-center"
                     >
-                      <div>
+                      {/* Application Information */}
+                      <Link
+                        to={`/underwriter/applications/${application.id}`}
+                        className="min-w-0 flex-1"
+                      >
                         <p className="font-medium text-gray-900">
                           {application.applicant}
                         </p>
@@ -157,9 +160,10 @@ export default function UnderwriterDashboard() {
                         <p className="mt-1 text-sm text-gray-500">
                           {application.id} · {application.property}
                         </p>
-                      </div>
+                      </Link>
 
-                      <div className="text-left sm:text-right">
+                      {/* Mortgage Amount */}
+                      <div className="sm:text-right">
                         <p className="font-medium text-gray-900">
                           {euro.format(application.requestedMortgage)}
                         </p>
@@ -168,7 +172,24 @@ export default function UnderwriterDashboard() {
                           Requested mortgage
                         </p>
                       </div>
-                    </Link>
+
+                      {/* Quick Actions */}
+                      <div className="flex flex-wrap gap-2">
+                        <Link
+                          to={`/underwriter/applications/${application.id}/ai-deliberation`}
+                          className="rounded-lg border border-al-border bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-100"
+                        >
+                          AI Findings
+                        </Link>
+
+                        <Link
+                          to={`/underwriter/applications/${application.id}/decision`}
+                          className="rounded-lg bg-al-navy px-3 py-2 text-xs font-medium text-white hover:bg-blue-900"
+                        >
+                          Loan Decision
+                        </Link>
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}

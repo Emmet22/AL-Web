@@ -17,6 +17,8 @@ import BrokerApplicationDetails from './pages/broker/BrokerApplicationDetails'
 
 import UnderwriterDashboard from './pages/underwriter/UnderwriterDashboard'
 import UnderwriterApplicationDetails from './pages/underwriter/UnderwriterApplicationDetails'
+import AIDeliberation from './pages/underwriter/AIDeliberation'
+import LoanDecision from './pages/underwriter/LoanDecision'
 
 function App() {
   return (
@@ -84,6 +86,30 @@ function App() {
               <ProtectedRoute allowedRole="underwriter">
                 <Layout role="underwriter">
                   <UnderwriterApplicationDetails />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* AI Deliberation Console */}
+          <Route
+            path="/underwriter/applications/:id/ai-deliberation"
+            element={
+              <ProtectedRoute allowedRole="underwriter">
+                <Layout role="underwriter">
+                  <AIDeliberation />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Loan Decision */}
+          <Route
+            path="/underwriter/applications/:id/decision"
+            element={
+              <ProtectedRoute allowedRole="underwriter">
+                <Layout role="underwriter">
+                  <LoanDecision />
                 </Layout>
               </ProtectedRoute>
             }
