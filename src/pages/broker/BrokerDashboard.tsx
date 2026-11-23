@@ -4,20 +4,10 @@ import { Link } from 'react-router'
 import { useAuth } from '../../context/AuthContext'
 import { useApplications } from '../../hooks/useApplications'
 
-import type { ApplicationStatus } from '../../types/application'
-
 import Card from '../../components/common/Card'
-import ApplicationTable from '../../components/common/ApplicationTable'
 import StatusBadge from '../../components/common/StatusBadge'
 
-const pipelineStatuses: ApplicationStatus[] = [
-  'Draft',
-  'Applied',
-  'AI Deliberated',
-  'Underwriter Approved',
-  'Funded',
-  'Closed',
-]
+import type { ApplicationStatus } from '../../types/application'
 
 const euro = new Intl.NumberFormat('en-IE', {
   style: 'currency',
@@ -25,8 +15,7 @@ const euro = new Intl.NumberFormat('en-IE', {
   maximumFractionDigits: 0,
 })
 
-export default function UnderwriterDashboard() {
-
+export default function BrokerDashboard() {
   const { user } = useAuth()
 
   const {
@@ -36,7 +25,6 @@ export default function UnderwriterDashboard() {
   } = useApplications(user?.role, user?.id)
 
   const summary = useMemo(() => ({
-
     total: applications.length,
 
     applied: applications.filter(
@@ -57,21 +45,14 @@ export default function UnderwriterDashboard() {
 
   }), [applications])
 
-  const groupedApplications = useMemo(() =>
-
-    pipelineStatuses.map(status => ({
-      status,
-      applications: applications.filter(
-        app => app.status === status
-      ),
-    }))
-
+  const recentApplications = useMemo(() =>
+    applications.slice(0, 5)
   , [applications])
 
   if (loading) {
     return (
       <div className="py-12 text-center text-gray-500">
-        Loading underwriting pipeline...
+        Loading your dashboard...
       </div>
     )
   }
@@ -80,7 +61,7 @@ export default function UnderwriterDashboard() {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-6">
         <p className="font-medium text-red-800">
-          Unable to load applications: {error}
+          Unable to load your applications: {error}
         </p>
       </div>
     )
@@ -89,131 +70,132 @@ export default function UnderwriterDashboard() {
   return (
     <div className="space-y-8">
 
-      {/* Page heading */}
+      {/* Welcome */}
       <div>
-
         <h1 className="text-2xl font-bold text-gray-900">
-          Underwriting Pipeline
+          Broker Dashboard
         </h1>
 
         <p className="mt-1 text-sm text-gray-500">
-          Monitor and review loan applications across the lending process.
+          Welcome back, {user?.name}. Here's an overview of your mortgage applications.
         </p>
-
       </div>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-
-        <SummaryCard
-          title="Total Applications"
-          value={summary.total}
-        />
-
-        <SummaryCard
-          title="Applied"
-          value={summary.applied}
-        />
-
-        <SummaryCard
-          title="AI Deliberated"
-          value={summary.aiDeliberated}
-        />
-
-        <SummaryCard
-          title="Approved"
-          value={summary.approved}
-        />
-
-        <SummaryCard
-          title="Funded"
-          value={summary.funded}
-        />
-
-      </div>
-
-      {/* Application pipeline */}
-      <div className="space-y-6">
-
-        <div>
-
-          <h2 className="text-xl font-semibold text-gray-900">
-            Applications by Status
+      {/* Summary */}
+      <section>
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">
+            Application Overview
           </h2>
 
           <p className="mt-1 text-sm text-gray-500">
-            Select an application to review its details.
+            Monitor the progress of your submitted applications.
           </p>
-
         </div>
 
-        {applications.length === 0 ? (
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+
+          <SummaryCard
+            title="Total Applications"
+            value={summary.total}
+            description="Your portfolio"
+          />
+
+          <SummaryCard
+            title="Submitted"
+            value={summary.applied}
+            description="Awaiting assessment"
+          />
+
+          <SummaryCard
+            title="AI Completed"
+            value={summary.aiDeliberated}
+            description="Awaiting underwriting"
+          />
+
+          <SummaryCard
+            title="Approved"
+            value={summary.approved}
+            description="Underwriter approved"
+          />
+
+          <SummaryCard
+            title="Funded"
+            value={summary.funded}
+            description="Successfully funded"
+          />
+
+        </div>
+      </section>
+
+      {/* Main content */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+        {/* Recent applications */}
+        <section className="lg:col-span-2">
 
           <Card>
-            <p className="py-6 text-center text-sm text-gray-500">
-              No applications are currently available.
-            </p>
-          </Card>
 
-        ) : (
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
 
-          groupedApplications.map(group => (
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Recent Applications
+                </h2>
 
-            <Card key={group.status}>
-
-              <div className="mb-4 flex items-center justify-between">
-
-                <div className="flex items-center gap-3">
-
-                  <StatusBadge status={group.status} />
-
-                  <span className="text-sm text-gray-500">
-                    {group.applications.length} applications
-                  </span>
-
-                </div>
-
+                <p className="mt-1 text-sm text-gray-500">
+                  Your latest mortgage applications.
+                </p>
               </div>
 
-              {group.applications.length === 0 ? (
+              <Link
+                to="/broker/applications"
+                className="text-sm font-medium text-al-navy hover:underline"
+              >
+                View all applications →
+              </Link>
 
-                <p className="py-4 text-sm text-gray-400">
-                  No applications at this stage.
+            </div>
+
+            <div className="mt-6">
+
+              {recentApplications.length === 0 ? (
+
+                <p className="py-8 text-center text-sm text-gray-500">
+                  You haven't submitted any applications yet.
                 </p>
 
               ) : (
 
-                <div className="space-y-3">
+                <div className="divide-y divide-gray-100">
 
-                  {group.applications.map(application => (
+                  {recentApplications.map(application => (
 
                     <Link
                       key={application.id}
-                      to={`/underwriter/applications/${application.id}`}
-                      className="flex flex-col justify-between gap-3 rounded-lg border border-gray-100 p-4 transition hover:border-gray-300 hover:bg-gray-50 sm:flex-row sm:items-center"
+                      to={`/broker/applications/${application.id}`}
+                      className="flex flex-col justify-between gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center"
                     >
 
                       <div>
-
                         <p className="font-medium text-gray-900">
                           {application.applicant}
                         </p>
 
-                        <p className="mt-1 text-sm text-gray-500">
-                          {application.referenceNumber ?? application.id} · {application.property}
+                        <p className="mt-1 text-xs text-gray-500">
+                          {application.referenceNumber ?? application.id}
+                          {' · '}
+                          {application.location}
                         </p>
-
                       </div>
 
-                      <div className="text-left sm:text-right">
+                      <div className="flex items-center justify-between gap-4 sm:justify-end">
 
-                        <p className="font-medium text-gray-900">
-                          {euro.format(application.requestedMortgage)}
-                        </p>
+                        <StatusBadge status={application.status} />
 
-                        <p className="mt-1 text-xs text-gray-500">
-                          Requested mortgage
-                        </p>
+                        <span className="text-sm font-medium text-al-navy">
+                          →
+                        </span>
 
                       </div>
 
@@ -225,28 +207,96 @@ export default function UnderwriterDashboard() {
 
               )}
 
-            </Card>
+            </div>
 
-          ))
+          </Card>
 
-        )}
+        </section>
+
+        {/* Quick actions */}
+        <section>
+
+          <Card>
+
+            <h2 className="text-lg font-semibold text-gray-900">
+              Quick Access
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              Manage your application portfolio.
+            </p>
+
+            <div className="mt-6 space-y-3">
+
+              <Link
+                to="/broker/applications"
+                className="block rounded-lg border border-al-border p-4 transition hover:border-al-navy hover:bg-al-soft"
+              >
+                <p className="text-sm font-semibold text-gray-900">
+                  View Applications
+                </p>
+
+                <p className="mt-1 text-xs text-gray-500">
+                  Search and review your submitted applications.
+                </p>
+              </Link>
+
+              <div className="rounded-lg border border-al-border p-4">
+                <p className="text-sm font-semibold text-gray-900">
+                  Application Portfolio
+                </p>
+
+                <p className="mt-1 text-xs text-gray-500">
+                  You currently have {summary.total} applications in the system.
+                </p>
+              </div>
+
+            </div>
+
+          </Card>
+
+        </section>
 
       </div>
 
-      {/* All applications */}
+      {/* Application status overview */}
       <section>
 
-        <h2 className="mb-4 text-xl font-semibold text-gray-900">
-          All Applications
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+          Application Progress
         </h2>
 
-        <ApplicationTable
-          applications={applications}
-          clickableRows
-          getApplicationLink={id =>
-            `/underwriter/applications/${id}`
-          }
-        />
+        <Card>
+
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+
+            <ProgressItem
+              label="Submitted"
+              value={summary.applied}
+              status="Applied"
+            />
+
+            <ProgressItem
+              label="AI Deliberated"
+              value={summary.aiDeliberated}
+              status="AI Deliberated"
+            />
+
+            <ProgressItem
+              label="Approved"
+              value={summary.approved}
+              status="Underwriter Approved"
+            />
+
+            <ProgressItem
+              label="Funded"
+              value={summary.funded}
+              status="Funded"
+            />
+
+          </div>
+
+        </Card>
 
       </section>
 
@@ -257,14 +307,14 @@ export default function UnderwriterDashboard() {
 function SummaryCard({
   title,
   value,
+  description,
 }: {
   title: string
   value: number
+  description: string
 }) {
-
   return (
     <Card>
-
       <p className="text-sm text-gray-500">
         {title}
       </p>
@@ -273,6 +323,33 @@ function SummaryCard({
         {value}
       </p>
 
+      <p className="mt-1 text-xs text-gray-400">
+        {description}
+      </p>
     </Card>
+  )
+}
+
+function ProgressItem({
+  label,
+  value,
+  status,
+}: {
+  label: string
+  value: number
+  status: ApplicationStatus
+}) {
+  return (
+    <div>
+      <p className="text-sm text-gray-500">
+        {label}
+      </p>
+
+      <p className="my-2 text-2xl font-bold text-gray-900">
+        {value}
+      </p>
+
+      <StatusBadge status={status} />
+    </div>
   )
 }
