@@ -30,6 +30,7 @@ function Sidebar({
         }`}
       >
         <div className="flex h-16 items-center justify-between border-b border-al-border px-6">
+
           <div>
             <h1 className="text-xl font-bold text-gray-900">
               AL
@@ -48,11 +49,14 @@ function Sidebar({
           >
             ✕
           </button>
+
         </div>
 
         <nav className="p-4">
+
           {role === 'broker' ? (
             <div className="space-y-1">
+
               <MobileNavLink
                 to="/broker/dashboard"
                 onClick={onClose}
@@ -66,17 +70,28 @@ function Sidebar({
               >
                 Applications
               </MobileNavLink>
+
             </div>
           ) : (
             <div className="space-y-1">
+
+              <MobileNavLink
+                to="/underwriter/dashboard"
+                onClick={onClose}
+              >
+                Dashboard
+              </MobileNavLink>
+
               <MobileNavLink
                 to="/underwriter/pipeline"
                 onClick={onClose}
               >
-                Pipeline
+                Origination Pipeline
               </MobileNavLink>
+
             </div>
           )}
+
         </nav>
       </aside>
     </>
@@ -97,6 +112,7 @@ function MobileNavLink({
   return (
     <NavLink
       to={to}
+      end
       onClick={onClick}
       className={({ isActive }) =>
         `block rounded-md px-4 py-3 text-sm font-medium ${

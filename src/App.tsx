@@ -16,6 +16,7 @@ import BrokerApplications from './pages/broker/BrokerApplications'
 import BrokerApplicationDetails from './pages/broker/BrokerApplicationDetails'
 
 import UnderwriterDashboard from './pages/underwriter/UnderwriterDashboard'
+import UnderwriterPipeline from './pages/underwriter/UnderwriterPipeline'
 import UnderwriterApplicationDetails from './pages/underwriter/UnderwriterApplicationDetails'
 import AIDeliberation from './pages/underwriter/AIDeliberation'
 import LoanDecision from './pages/underwriter/LoanDecision'
@@ -70,11 +71,23 @@ function App() {
 
           {/* Underwriter Dashboard */}
           <Route
-            path="/underwriter/pipeline"
+            path="/underwriter/dashboard"
             element={
               <ProtectedRoute allowedRole="underwriter">
                 <Layout role="underwriter">
                   <UnderwriterDashboard />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Underwriter Pipeline */}
+          <Route
+            path="/underwriter/pipeline"
+            element={
+              <ProtectedRoute allowedRole="underwriter">
+                <Layout role="underwriter">
+                  <UnderwriterPipeline />
                 </Layout>
               </ProtectedRoute>
             }

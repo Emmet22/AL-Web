@@ -15,8 +15,10 @@ function Layout({ role, children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-al-page">
+
       {/* Desktop navigation */}
       <header className="hidden h-16 items-center border-b border-al-border bg-white px-6 md:flex lg:px-8">
+
         {/* Brand */}
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-md bg-gray-900">
@@ -38,6 +40,7 @@ function Layout({ role, children }: LayoutProps) {
 
         {/* Navigation */}
         <nav className="ml-8 flex h-full items-center gap-1">
+
           {role === 'broker' ? (
             <>
               <DesktopNavLink to="/broker/dashboard">
@@ -49,20 +52,29 @@ function Layout({ role, children }: LayoutProps) {
               </DesktopNavLink>
             </>
           ) : (
-            <DesktopNavLink to="/underwriter/pipeline">
-              Pipeline
-            </DesktopNavLink>
+            <>
+              <DesktopNavLink to="/underwriter/dashboard">
+                Dashboard
+              </DesktopNavLink>
+
+              <DesktopNavLink to="/underwriter/pipeline">
+                Origination Pipeline
+              </DesktopNavLink>
+            </>
           )}
+
         </nav>
 
         {/* User menu */}
         <div className="ml-auto">
           <UserMenu />
         </div>
+
       </header>
 
       {/* Mobile header */}
       <header className="flex h-16 items-center justify-between border-b border-al-border bg-white px-4 md:hidden">
+
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -85,6 +97,7 @@ function Layout({ role, children }: LayoutProps) {
         </div>
 
         <UserMenu />
+
       </header>
 
       {/* Mobile navigation */}
@@ -102,6 +115,7 @@ function Layout({ role, children }: LayoutProps) {
 
         <Footer />
       </div>
+
     </div>
   )
 }
@@ -118,6 +132,7 @@ function DesktopNavLink({
   return (
     <NavLink
       to={to}
+      end
       className={({ isActive }) =>
         `rounded-md px-4 py-2 text-sm font-medium transition-colors ${
           isActive
