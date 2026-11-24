@@ -88,6 +88,12 @@ function Sidebar({
               >
                 Origination Pipeline
               </MobileNavLink>
+              <MobileNavLink 
+                to="/underwriter/stress-testing"
+                onClick={onClose}
+              >
+                Stress Testing
+              </MobileNavLink>
 
             </div>
           )}

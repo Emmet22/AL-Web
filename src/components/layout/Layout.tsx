@@ -60,6 +60,9 @@ function Layout({ role, children }: LayoutProps) {
               <DesktopNavLink to="/underwriter/pipeline">
                 Origination Pipeline
               </DesktopNavLink>
+              <DesktopNavLink to="/underwriter/stress-testing">
+                Stress Testing
+              </DesktopNavLink>
             </>
           )}
 

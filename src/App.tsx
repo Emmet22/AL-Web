@@ -20,6 +20,7 @@ import UnderwriterPipeline from './pages/underwriter/UnderwriterPipeline'
 import UnderwriterApplicationDetails from './pages/underwriter/UnderwriterApplicationDetails'
 import AIDeliberation from './pages/underwriter/AIDeliberation'
 import LoanDecision from './pages/underwriter/LoanDecision'
+import MacroStressTesting from './pages/underwriter/MacroStressTesting'
 
 function App() {
   return (
@@ -123,6 +124,18 @@ function App() {
               <ProtectedRoute allowedRole="underwriter">
                 <Layout role="underwriter">
                   <LoanDecision />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Macro Stress Testing */}
+          <Route
+            path="/underwriter/stress-testing"
+            element={
+              <ProtectedRoute allowedRole="underwriter">
+                <Layout role="underwriter">
+                  <MacroStressTesting />
                 </Layout>
               </ProtectedRoute>
             }
