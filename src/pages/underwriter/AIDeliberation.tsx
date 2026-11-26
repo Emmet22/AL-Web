@@ -1,134 +1,29 @@
 import { Link, useParams } from 'react-router'
 
-/**
- * NOTE 
- * This is a sample page to tinker with the UI.
- * Later on the actual API will be implemented.
- */
+import AgentResultCard from '../../components/ai-deliberation/AgentResultCard'
+import ApplicationSummary from '../../components/ai-deliberation/ApplicationSummary'
+import RecommendationCard from '../../components/ai-deliberation/RecommendationCard'
+import DeliberationTimeline from '../../components/ai-deliberation/DeliberationTimeline'
 
-const agents = [
-  {
-    name: 'Affordability Agent',
-    role: 'Financial Assessment',
-    status: 'Completed',
-    recommendation: 'Acceptable',
-    description:
-      'Evaluates the applicant’s income, existing debt and ability to afford mortgage repayments.',
-    findings: [
-      'Applicant income supports the requested mortgage.',
-      'Existing debt levels are within acceptable limits.',
-      'Estimated disposable income remains positive after repayments.',
-    ],
-  },
-  {
-    name: 'Valuation Agent',
-    role: 'Property Assessment',
-    status: 'Completed',
-    recommendation: 'Review Required',
-    description:
-      'Compares the asking price against the machine learning property valuation and assesses collateral risk.',
-    findings: [
-      'Property asking price is slightly above the estimated ML valuation.',
-      'Loan-to-value ratio requires additional consideration.',
-      'Property remains suitable as potential mortgage security.',
-    ],
-  },
-  {
-    name: 'Market & Macro Researcher',
-    role: 'Economic Analysis',
-    status: 'Completed',
-    recommendation: 'Acceptable',
-    description:
-      'Considers current economic conditions, mortgage interest rates and wider market trends.',
-    findings: [
-      'Current interest rate environment presents moderate risk.',
-      'Mortgage affordability should be tested against potential rate increases.',
-      'No significant market concerns identified in this assessment.',
-    ],
-  },
-  {
-    name: 'Underwriting Strategist',
-    role: 'Final AI Recommendation',
-    status: 'Completed',
-    recommendation: 'Conditionally Approve',
-    description:
-      'Combines the findings from the other agents to generate an overall lending recommendation.',
-    findings: [
-      'Affordability assessment is generally positive.',
-      'Property valuation requires further review.',
-      'Recommend approval subject to valuation verification.',
-    ],
-  },
-]
-
-function AgentCard({
-  agent,
-}: {
-  agent: (typeof agents)[number]
-}) {
-  const isConditional = agent.recommendation === 'Review Required'
-
-  return (
-    <div className="rounded-xl border border-al-border bg-white p-5 shadow-sm">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-sm font-medium text-al-muted">
-            {agent.role}
-          </p>
-          <h3 className="mt-1 text-lg font-semibold text-al-navy">
-            {agent.name}
-          </h3>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-al-success-bg px-3 py-1 text-xs font-medium text-al-success">
-            {agent.status}
-          </span>
-
-          <span
-            className={`rounded-full px-3 py-1 text-xs font-medium ${
-              isConditional
-                ? 'bg-amber-100 text-amber-800'
-                : 'bg-al-success-bg text-al-success'
-            }`}
-          >
-            {agent.recommendation}
-          </span>
-        </div>
-      </div>
-
-      <p className="mt-3 text-sm leading-6 text-al-muted">
-        {agent.description}
-      </p>
-
-      <div className="mt-5 border-t border-al-border pt-4">
-        <h4 className="mb-3 text-sm font-semibold text-gray-800">
-          Key Findings
-        </h4>
-
-        <ul className="space-y-2">
-          {agent.findings.map((finding, index) => (
-            <li
-              key={index}
-              className="flex gap-2 text-sm leading-5 text-gray-600"
-            >
-              <span className="mt-0.5 text-al-navy">•</span>
-              {finding}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  )
-}
+import {
+  sampleAgents,
+  sampleOverallRecommendation,
+  sampleDeliberationSteps,
+} from '../../data/sampleAIDeliberation'
 
 export default function AIDeliberation() {
   const { id } = useParams()
 
+  const agentsCompleted = sampleAgents.filter(
+    agent => agent.status === 'Completed'
+  ).length
+
   return (
     <div className="space-y-6">
+
       {/* Header */}
       <div>
+
         <Link
           to={`/underwriter/applications/${id}`}
           className="text-sm font-medium text-al-navy hover:underline"
@@ -137,147 +32,80 @@ export default function AIDeliberation() {
         </Link>
 
         <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
           <div>
+
             <h1 className="text-2xl font-bold text-gray-900">
               AI Deliberation Console
             </h1>
+
             <p className="mt-1 text-sm text-al-muted">
               Review the findings and recommendation generated by the AI
               underwriting agents.
             </p>
+
           </div>
 
           <span className="w-fit rounded-full bg-al-success-bg px-3 py-1.5 text-sm font-medium text-al-success">
             Assessment Complete
           </span>
+
         </div>
+
       </div>
 
       {/* Application Summary */}
-      <div className="rounded-xl border border-al-border bg-white p-5 shadow-sm">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-al-muted">
-              Application Reference
-            </p>
-            <p className="mt-1 font-semibold text-gray-900">
-              {id || 'APP-0001'}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-al-muted">
-              Applicant
-            </p>
-            <p className="mt-1 font-semibold text-gray-900">
-              Sample Applicant
-            </p>
-          </div>
-
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-al-muted">
-              Agents Completed
-            </p>
-            <p className="mt-1 font-semibold text-gray-900">
-              4 / 4
-            </p>
-          </div>
-        </div>
-      </div>
+      <ApplicationSummary
+        applicationId={id || 'Unavailable'}
+        applicant="Sample Applicant"
+        agentsCompleted={agentsCompleted}
+        totalAgents={sampleAgents.length}
+      />
 
       {/* Overall Recommendation */}
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-medium text-amber-800">
-              Underwriting Strategist Recommendation
-            </p>
-
-            <h2 className="mt-1 text-2xl font-bold text-amber-900">
-              Conditionally Approve
-            </h2>
-
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-amber-800">
-              The AI committee recommends conditional approval. The
-              affordability assessment is positive, but the property
-              valuation should be verified before final approval.
-            </p>
-          </div>
-
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-amber-100 text-3xl">
-            !
-          </div>
-        </div>
-      </div>
+      <RecommendationCard
+        title={sampleOverallRecommendation.title}
+        outcome={sampleOverallRecommendation.outcome}
+        description={sampleOverallRecommendation.description}
+      />
 
       {/* Agent Results */}
-      <div>
+      <section>
+
         <div className="mb-4">
+
           <h2 className="text-lg font-semibold text-gray-900">
             Agent Assessment Results
           </h2>
+
           <p className="mt-1 text-sm text-al-muted">
             Individual findings from each member of the AI underwriting
             committee.
           </p>
+
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          {agents.map((agent) => (
-            <AgentCard key={agent.name} agent={agent} />
+
+          {sampleAgents.map(agent => (
+            <AgentResultCard
+              key={agent.name}
+              agent={agent}
+            />
           ))}
+
         </div>
-      </div>
 
-      {/* Decision Trail */}
-      <div className="rounded-xl border border-al-border bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900">
-          Deliberation Summary
-        </h2>
+      </section>
 
-        <div className="mt-4 space-y-4">
-          {[
-            {
-              step: '01',
-              title: 'Affordability Assessment',
-              detail: 'Applicant repayment capacity assessed.',
-            },
-            {
-              step: '02',
-              title: 'Property Valuation',
-              detail: 'Property value and collateral risk evaluated.',
-            },
-            {
-              step: '03',
-              title: 'Market & Macro Analysis',
-              detail: 'Economic conditions and interest rate risks reviewed.',
-            },
-            {
-              step: '04',
-              title: 'Strategist Recommendation',
-              detail: 'Agent findings combined into a conditional approval recommendation.',
-            },
-          ].map((item) => (
-            <div key={item.step} className="flex gap-4">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-al-navy-light text-sm font-semibold text-al-navy">
-                {item.step}
-              </div>
-
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {item.title}
-                </h3>
-                <p className="mt-1 text-sm text-al-muted">
-                  {item.detail}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Deliberation Timeline */}
+      <DeliberationTimeline
+        steps={sampleDeliberationSteps}
+      />
 
       {/* Actions */}
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+
         <Link
           to={`/underwriter/applications/${id}`}
           className="rounded-lg border border-al-border bg-white px-5 py-2.5 text-center text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -291,6 +119,7 @@ export default function AIDeliberation() {
         >
           Review Loan Decision →
         </Link>
+
       </div>
 
       <p className="text-xs text-al-muted">
@@ -298,6 +127,7 @@ export default function AIDeliberation() {
         displayed above are sample data and do not represent a live AI
         assessment.
       </p>
+
     </div>
   )
 }

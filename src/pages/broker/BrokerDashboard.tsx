@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { Link } from 'react-router'
 
 import { useAuth } from '../../context/AuthContext'
@@ -6,14 +5,10 @@ import { useApplications } from '../../hooks/useApplications'
 
 import Card from '../../components/common/Card'
 import StatusBadge from '../../components/common/StatusBadge'
+import SummaryCard from '../../components/dashboard/SummaryCard'
+import ProgressItem from '../../components/dashboard/ProgressItem'
 
-import type { ApplicationStatus } from '../../types/application'
-
-const euro = new Intl.NumberFormat('en-IE', {
-  style: 'currency',
-  currency: 'EUR',
-  maximumFractionDigits: 0,
-})
+import { getApplicationStatistics } from '../../utils/applicationStatistics'
 
 export default function BrokerDashboard() {
   const { user } = useAuth()
@@ -24,30 +19,9 @@ export default function BrokerDashboard() {
     error,
   } = useApplications(user?.role, user?.id)
 
-  const summary = useMemo(() => ({
-    total: applications.length,
+  const summary = getApplicationStatistics(applications)
 
-    applied: applications.filter(
-      app => app.status === 'Applied'
-    ).length,
-
-    aiDeliberated: applications.filter(
-      app => app.status === 'AI Deliberated'
-    ).length,
-
-    approved: applications.filter(
-      app => app.status === 'Underwriter Approved'
-    ).length,
-
-    funded: applications.filter(
-      app => app.status === 'Funded'
-    ).length,
-
-  }), [applications])
-
-  const recentApplications = useMemo(() =>
-    applications.slice(0, 5)
-  , [applications])
+  const recentApplications = applications.slice(0, 5)
 
   if (loading) {
     return (
@@ -77,11 +51,12 @@ export default function BrokerDashboard() {
         </h1>
 
         <p className="mt-1 text-sm text-gray-500">
-          Welcome back, {user?.name}. Here's an overview of your mortgage applications.
+          Welcome back, {user?.name || 'Broker'}.
+          Here's an overview of your mortgage applications.
         </p>
       </div>
 
-      {/* Summary */}
+      {/* Application Overview */}
       <section>
         <div className="mb-4">
           <h2 className="text-lg font-semibold text-gray-900">
@@ -94,7 +69,6 @@ export default function BrokerDashboard() {
         </div>
 
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-
           <SummaryCard
             title="Total Applications"
             value={summary.total}
@@ -124,20 +98,16 @@ export default function BrokerDashboard() {
             value={summary.funded}
             description="Successfully funded"
           />
-
         </div>
       </section>
 
-      {/* Main content */}
+      {/* Main Content */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
 
-        {/* Recent applications */}
+        {/* Recent Applications */}
         <section className="lg:col-span-2">
-
           <Card>
-
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">
                   Recent Applications
@@ -154,29 +124,21 @@ export default function BrokerDashboard() {
               >
                 View all applications →
               </Link>
-
             </div>
 
             <div className="mt-6">
-
               {recentApplications.length === 0 ? (
-
                 <p className="py-8 text-center text-sm text-gray-500">
                   You haven't submitted any applications yet.
                 </p>
-
               ) : (
-
                 <div className="divide-y divide-gray-100">
-
                   {recentApplications.map(application => (
-
                     <Link
                       key={application.id}
                       to={`/broker/applications/${application.id}`}
                       className="flex flex-col justify-between gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center"
                     >
-
                       <div>
                         <p className="font-medium text-gray-900">
                           {application.applicant}
@@ -190,34 +152,23 @@ export default function BrokerDashboard() {
                       </div>
 
                       <div className="flex items-center justify-between gap-4 sm:justify-end">
-
                         <StatusBadge status={application.status} />
 
                         <span className="text-sm font-medium text-al-navy">
                           →
                         </span>
-
                       </div>
-
                     </Link>
-
                   ))}
-
                 </div>
-
               )}
-
             </div>
-
           </Card>
-
         </section>
 
-        {/* Quick actions */}
+        {/* Quick Access */}
         <section>
-
           <Card>
-
             <h2 className="text-lg font-semibold text-gray-900">
               Quick Access
             </h2>
@@ -227,7 +178,6 @@ export default function BrokerDashboard() {
             </p>
 
             <div className="mt-6 space-y-3">
-
               <Link
                 to="/broker/applications"
                 className="block rounded-lg border border-al-border p-4 transition hover:border-al-navy hover:bg-al-soft"
@@ -250,26 +200,19 @@ export default function BrokerDashboard() {
                   You currently have {summary.total} applications in the system.
                 </p>
               </div>
-
             </div>
-
           </Card>
-
         </section>
-
       </div>
 
-      {/* Application status overview */}
+      {/* Application Progress */}
       <section>
-
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
           Application Progress
         </h2>
 
         <Card>
-
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-
             <ProgressItem
               label="Submitted"
               value={summary.applied}
@@ -293,63 +236,9 @@ export default function BrokerDashboard() {
               value={summary.funded}
               status="Funded"
             />
-
           </div>
-
         </Card>
-
       </section>
-
-    </div>
-  )
-}
-
-function SummaryCard({
-  title,
-  value,
-  description,
-}: {
-  title: string
-  value: number
-  description: string
-}) {
-  return (
-    <Card>
-      <p className="text-sm text-gray-500">
-        {title}
-      </p>
-
-      <p className="mt-2 text-2xl font-bold text-gray-900">
-        {value}
-      </p>
-
-      <p className="mt-1 text-xs text-gray-400">
-        {description}
-      </p>
-    </Card>
-  )
-}
-
-function ProgressItem({
-  label,
-  value,
-  status,
-}: {
-  label: string
-  value: number
-  status: ApplicationStatus
-}) {
-  return (
-    <div>
-      <p className="text-sm text-gray-500">
-        {label}
-      </p>
-
-      <p className="my-2 text-2xl font-bold text-gray-900">
-        {value}
-      </p>
-
-      <StatusBadge status={status} />
     </div>
   )
 }

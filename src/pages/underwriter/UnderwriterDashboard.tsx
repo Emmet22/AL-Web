@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { Link } from 'react-router'
 
 import { useAuth } from '../../context/AuthContext'
@@ -6,56 +5,30 @@ import { useApplications } from '../../hooks/useApplications'
 
 import Card from '../../components/common/Card'
 import StatusBadge from '../../components/common/StatusBadge'
+import SummaryCard from '../../components/dashboard/SummaryCard'
 
-import type { ApplicationStatus } from '../../types/application'
-
-const euro = new Intl.NumberFormat('en-IE', {
-  style: 'currency',
-  currency: 'EUR',
-  maximumFractionDigits: 0,
-})
+import { getApplicationStatistics } from '../../utils/applicationStatistics'
+import { formatCurrency } from '../../utils/applicationFormatting'
 
 export default function UnderwriterDashboard() {
   const { user } = useAuth()
 
-  const { applications, loading, error } = useApplications(
-    user?.role,
-    user?.id
-  )
+  const {
+    applications,
+    loading,
+    error,
+  } = useApplications(user?.role, user?.id)
 
-  const statistics = useMemo(() => {
-    return {
-      total: applications.length,
-
-      awaitingReview: applications.filter(
-        (app) => app.status === 'Applied'
-      ).length,
-
-      aiCompleted: applications.filter(
-        (app) => app.status === 'AI Deliberated'
-      ).length,
-
-      approved: applications.filter(
-        (app) => app.status === 'Underwriter Approved'
-      ).length,
-
-      funded: applications.filter(
-        (app) => app.status === 'Funded'
-      ).length,
-    }
-  }, [applications])
+  const statistics = getApplicationStatistics(applications)
 
   const recentApplications = applications.slice(0, 5)
 
   const reviewApplications = applications
-    .filter(
-      (app) =>
-        app.status === 'Applied' ||
-        app.status === 'AI Deliberated'
+    .filter(app =>
+      app.status === 'Applied' ||
+      app.status === 'AI Deliberated',
     )
     .slice(0, 5)
-
-  const formatStatus = (status: ApplicationStatus) => status
 
   if (loading) {
     return (
@@ -89,64 +62,37 @@ export default function UnderwriterDashboard() {
         </h1>
 
         <p className="mt-1 text-sm text-gray-500">
-          Welcome back, {user?.name || 'Underwriter'}. Here's an overview
-          of your lending activity.
+          Welcome back, {user?.name || 'Underwriter'}.
+          Here's an overview of your lending activity.
         </p>
       </div>
 
       {/* Statistics */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <SummaryCard
+          title="Total Applications"
+          value={statistics.total}
+        />
 
-        <Card>
-          <p className="text-sm text-gray-500">
-            Total Applications
-          </p>
+        <SummaryCard
+          title="Awaiting Review"
+          value={statistics.applied}
+        />
 
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {statistics.total}
-          </p>
-        </Card>
+        <SummaryCard
+          title="AI Deliberated"
+          value={statistics.aiDeliberated}
+        />
 
-        <Card>
-          <p className="text-sm text-gray-500">
-            Awaiting Review
-          </p>
+        <SummaryCard
+          title="Approved"
+          value={statistics.approved}
+        />
 
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {statistics.awaitingReview}
-          </p>
-        </Card>
-
-        <Card>
-          <p className="text-sm text-gray-500">
-            AI Deliberated
-          </p>
-
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {statistics.aiCompleted}
-          </p>
-        </Card>
-
-        <Card>
-          <p className="text-sm text-gray-500">
-            Approved
-          </p>
-
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {statistics.approved}
-          </p>
-        </Card>
-
-        <Card>
-          <p className="text-sm text-gray-500">
-            Funded
-          </p>
-
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {statistics.funded}
-          </p>
-        </Card>
-
+        <SummaryCard
+          title="Funded"
+          value={statistics.funded}
+        />
       </div>
 
       {/* Main Dashboard Content */}
@@ -156,7 +102,6 @@ export default function UnderwriterDashboard() {
         <div className="xl:col-span-2">
           <Card>
             <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">
                   Applications Requiring Attention
@@ -173,7 +118,6 @@ export default function UnderwriterDashboard() {
               >
                 View Pipeline →
               </Link>
-
             </div>
 
             {reviewApplications.length === 0 ? (
@@ -184,13 +128,11 @@ export default function UnderwriterDashboard() {
               </div>
             ) : (
               <div className="divide-y divide-gray-100">
-
-                {reviewApplications.map((application) => (
+                {reviewApplications.map(application => (
                   <div
                     key={application.id}
                     className="flex flex-col justify-between gap-3 py-4 sm:flex-row sm:items-center"
                   >
-
                     <div>
                       <Link
                         to={`/underwriter/applications/${application.id}`}
@@ -206,7 +148,7 @@ export default function UnderwriterDashboard() {
                       </p>
 
                       <p className="mt-1 text-sm font-medium text-gray-700">
-                        {euro.format(application.requestedMortgage)}
+                        {formatCurrency(application.requestedMortgage)}
                       </p>
                     </div>
 
@@ -220,10 +162,8 @@ export default function UnderwriterDashboard() {
                         Review →
                       </Link>
                     </div>
-
                   </div>
                 ))}
-
               </div>
             )}
           </Card>
@@ -237,51 +177,27 @@ export default function UnderwriterDashboard() {
             </h2>
 
             <div className="space-y-3">
+              <QuickAction
+                title="Origination Pipeline"
+                description="View and manage mortgage applications."
+                link="/underwriter/pipeline"
+                action="Open Pipeline"
+              />
 
-              <Link
-                to="/underwriter/pipeline"
-                className="block rounded-lg border border-gray-200 p-4 transition hover:border-al-navy hover:bg-al-navy-light"
-              >
-                <h3 className="font-semibold text-gray-900">
-                  Origination Pipeline
-                </h3>
-
-                <p className="mt-1 text-sm text-gray-500">
-                  View and manage mortgage applications.
-                </p>
-
-                <span className="mt-3 block text-sm font-semibold text-al-navy">
-                  Open Pipeline →
-                </span>
-              </Link>
-
-              <Link
-                to="/underwriter/stress-testing"
-                className="block rounded-lg border border-gray-200 p-4 transition hover:border-al-navy hover:bg-al-navy-light"
-              >
-                <h3 className="font-semibold text-gray-900">
-                  Macro Stress Testing
-                </h3>
-
-                <p className="mt-1 text-sm text-gray-500">
-                  Explore the impact of interest-rate and property-value changes.
-                </p>
-
-                <span className="mt-3 block text-sm font-semibold text-al-navy">
-                  Open Stress Testing →
-                </span>
-              </Link>
-
+              <QuickAction
+                title="Macro Stress Testing"
+                description="Explore the impact of interest-rate and property-value changes."
+                link="/underwriter/stress-testing"
+                action="Open Stress Testing"
+              />
             </div>
           </Card>
         </div>
-
       </div>
 
       {/* Recent Applications */}
       <Card>
         <div className="mb-5 flex items-center justify-between">
-
           <div>
             <h2 className="text-lg font-semibold text-gray-900">
               Recent Applications
@@ -298,7 +214,6 @@ export default function UnderwriterDashboard() {
           >
             View All →
           </Link>
-
         </div>
 
         {recentApplications.length === 0 ? (
@@ -308,33 +223,18 @@ export default function UnderwriterDashboard() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-
               <thead>
                 <tr className="border-b border-gray-200 text-gray-500">
-                  <th className="pb-3 pr-4 font-medium">
-                    Applicant
-                  </th>
-
-                  <th className="pb-3 pr-4 font-medium">
-                    Reference
-                  </th>
-
-                  <th className="pb-3 pr-4 font-medium">
-                    Mortgage
-                  </th>
-
-                  <th className="pb-3 pr-4 font-medium">
-                    Status
-                  </th>
-
-                  <th className="pb-3 font-medium">
-                    Action
-                  </th>
+                  <th className="pb-3 pr-4 font-medium">Applicant</th>
+                  <th className="pb-3 pr-4 font-medium">Reference</th>
+                  <th className="pb-3 pr-4 font-medium">Mortgage</th>
+                  <th className="pb-3 pr-4 font-medium">Status</th>
+                  <th className="pb-3 font-medium">Action</th>
                 </tr>
               </thead>
 
               <tbody>
-                {recentApplications.map((application) => (
+                {recentApplications.map(application => (
                   <tr
                     key={application.id}
                     className="border-b border-gray-100 last:border-0"
@@ -348,7 +248,7 @@ export default function UnderwriterDashboard() {
                     </td>
 
                     <td className="py-4 pr-4 font-medium text-gray-700">
-                      {euro.format(application.requestedMortgage)}
+                      {formatCurrency(application.requestedMortgage)}
                     </td>
 
                     <td className="py-4 pr-4">
@@ -366,12 +266,41 @@ export default function UnderwriterDashboard() {
                   </tr>
                 ))}
               </tbody>
-
             </table>
           </div>
         )}
       </Card>
-
     </div>
+  )
+}
+
+function QuickAction({
+  title,
+  description,
+  link,
+  action,
+}: {
+  title: string
+  description: string
+  link: string
+  action: string
+}) {
+  return (
+    <Link
+      to={link}
+      className="block rounded-lg border border-gray-200 p-4 transition hover:border-al-navy hover:bg-al-navy-light"
+    >
+      <h3 className="font-semibold text-gray-900">
+        {title}
+      </h3>
+
+      <p className="mt-1 text-sm text-gray-500">
+        {description}
+      </p>
+
+      <span className="mt-3 block text-sm font-semibold text-al-navy">
+        {action} →
+      </span>
+    </Link>
   )
 }

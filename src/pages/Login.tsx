@@ -38,7 +38,7 @@ export default function Login() {
   }, [user, loading, navigate])
 
   async function handleSubmit(
-    event: FormEvent<HTMLFormElement>,
+    event: SubmitEvent<HTMLFormElement>,
   ) {
     event.preventDefault()
 
