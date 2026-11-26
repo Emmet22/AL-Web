@@ -179,11 +179,12 @@ export default function ApplicationDetails({
               </h2>
 
               <p className="mt-1 text-sm text-gray-500">
-                Review the AI assessment or proceed to a loan decision.
+                Review the AI assessment, run financial stress tests or proceed to a loan decision.
               </p>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
+              {/* AI Findings */}
               <button
                 onClick={() =>
                   navigate(`/underwriter/applications/${application.id}/ai-deliberation`)
@@ -193,6 +194,17 @@ export default function ApplicationDetails({
                 View AI Findings
               </button>
 
+              {/* Macro Stress Testing */}
+              <button
+                onClick={() =>
+                  navigate(`/underwriter/stress-testing/${application.id}`)
+                }
+                className="rounded-lg border border-al-navy px-4 py-2.5 text-sm font-semibold text-al-navy transition hover:bg-al-navy-light"
+              >
+                Run Macro Stress Test
+              </button>
+
+              {/* Loan Decision */}
               <button
                 onClick={() =>
                   navigate(`/underwriter/applications/${application.id}/decision`)

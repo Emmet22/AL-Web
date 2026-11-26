@@ -141,6 +141,17 @@ function App() {
             }
           />
 
+          <Route
+            path="/underwriter/stress-testing/:applicationId"
+            element={
+              <ProtectedRoute allowedRole="underwriter">
+                <Layout role="underwriter">
+                  <MacroStressTesting />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
           {/* Default */}
           <Route
             path="/"

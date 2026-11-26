@@ -57,7 +57,15 @@ export function mapApplication(
 
     askingPrice: application.askingPrice,
 
-    // AI valuation may not exist yet.
+    // Use the property's assessment value.
+    // Fall back to asking price if no valid value exists.
+    propertyValue:
+      Number.isFinite(application.propertyValue) &&
+      application.propertyValue > 0
+        ? application.propertyValue
+        : application.askingPrice,
+
+    // AI valuation is separate from the property assessment value.
     // Do not substitute propertyValue for it.
     mlValuation: application.valuation,
   }

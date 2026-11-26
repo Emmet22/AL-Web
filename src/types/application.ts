@@ -31,6 +31,7 @@ export interface Application {
   requestedMortgage: number
   loanTerm: number
   askingPrice: number
+  propertyValue: number
   mlValuation?: number
 }
 

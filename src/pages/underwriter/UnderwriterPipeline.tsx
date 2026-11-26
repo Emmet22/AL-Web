@@ -188,6 +188,12 @@ export default function UnderwriterDashboard() {
                         >
                           Loan Decision
                         </Link>
+                        <Link
+                          to={`/underwriter/stress-testing/${application.id}`}
+                          className="rounded-lg border border-al-navy bg-white px-3 py-2 text-xs font-medium text-al-navy hover:bg-al-navy-light"
+                        >
+                          Stress Test
+                        </Link>
                       </div>
                     </div>
                   ))}
