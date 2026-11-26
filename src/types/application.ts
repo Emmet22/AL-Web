@@ -33,6 +33,7 @@ export interface Application {
   askingPrice: number
   propertyValue: number
   mlValuation?: number
+  monthlyDebtRepayments: number
 }
 
 // Structure received from Firestore.

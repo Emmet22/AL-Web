@@ -57,6 +57,8 @@ export function mapApplication(
 
     askingPrice: application.askingPrice,
 
+    monthlyDebtRepayments: application.monthlyDebtRepayments,
+
     // Use the property's assessment value.
     // Fall back to asking price if no valid value exists.
     propertyValue:
