@@ -1,37 +1,40 @@
 import {
   useEffect,
   useState,
-  type FormEvent,
+  type SubmitEvent,
 } from 'react'
 
 import { useNavigate } from 'react-router'
 
 import { useAuth } from '../context/AuthContext'
 
-function Login() {
+import type { UserRole } from '../types/auth'
+
+function getDashboardPath(role: UserRole) {
+  return role === 'broker'
+    ? '/broker/dashboard'
+    : '/underwriter/pipeline'
+}
+
+export default function Login() {
   const navigate = useNavigate()
+
   const { user, loading, login } = useAuth()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [isSubmitting, setIsSubmitting] =
-    useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Redirect users who are already authenticated.
   useEffect(() => {
     if (loading || !user) {
       return
     }
 
-    if (user.role === 'broker') {
-      navigate('/broker/dashboard', {
-        replace: true,
-      })
-    } else {
-      navigate('/underwriter/pipeline', {
-        replace: true,
-      })
-    }
+    navigate(getDashboardPath(user.role), {
+      replace: true,
+    })
   }, [user, loading, navigate])
 
   async function handleSubmit(
@@ -48,11 +51,10 @@ function Login() {
         password,
       )
 
-      if (authenticatedUser.role === 'broker') {
-        navigate('/broker/dashboard')
-      } else {
-        navigate('/underwriter/pipeline')
-      }
+      navigate(
+        getDashboardPath(authenticatedUser.role),
+        { replace: true },
+      )
     } catch (error) {
       console.error('Login failed:', error)
 
@@ -67,6 +69,8 @@ function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-al-page p-4">
       <div className="w-full max-w-md rounded-lg border border-al-border bg-white p-8">
+
+        {/* Header */}
         <div className="mb-8">
           <div className="flex h-11 w-11 items-center justify-center rounded-md bg-gray-900">
             <span className="text-base font-bold text-white">
@@ -87,10 +91,13 @@ function Login() {
           </p>
         </div>
 
+        {/* Login Form */}
         <form
           onSubmit={handleSubmit}
           className="space-y-4"
         >
+
+          {/* Email */}
           <div>
             <label
               htmlFor="email"
@@ -108,10 +115,12 @@ function Login() {
               }
               required
               autoComplete="email"
+              autoCapitalize="none"
               className="w-full rounded-md border border-al-border px-3 py-2.5 text-sm outline-none focus:border-al-navy focus:ring-1 focus:ring-al-navy"
             />
           </div>
 
+          {/* Password */}
           <div>
             <label
               htmlFor="password"
@@ -133,12 +142,17 @@ function Login() {
             />
           </div>
 
+          {/* Error */}
           {error && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-al-error">
+            <div
+              role="alert"
+              className="rounded-md bg-red-50 p-3 text-sm text-al-error"
+            >
               {error}
             </div>
           )}
 
+          {/* Submit */}
           <button
             type="submit"
             disabled={isSubmitting}
@@ -148,10 +162,9 @@ function Login() {
               ? 'Signing in...'
               : 'Sign in'}
           </button>
+
         </form>
       </div>
     </div>
   )
 }
-
-export default Login
