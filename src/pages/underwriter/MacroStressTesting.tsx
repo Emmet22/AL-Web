@@ -15,6 +15,10 @@ const formatCurrency = (value: number) =>
 const formatPercentage = (value: number) =>
   `${value.toFixed(1)}%`
 
+// Keeps numeric inputs within their permitted range.
+const clampValue = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value))
+
 export default function MacroStressTesting() {
   const [loanAmount, setLoanAmount] = useState(300000)
   const [propertyValue, setPropertyValue] = useState(375000)
@@ -44,8 +48,7 @@ export default function MacroStressTesting() {
     [loanAmount, propertyValue, interestRate, loanTerm, propertyDecrease]
   )
 
-  const currentLTV =
-    propertyValue > 0 ? (loanAmount / propertyValue) * 100 : 0
+  const currentLTV = (loanAmount / propertyValue) * 100
 
   const getLTVStatus = (ltv: number) => {
     if (ltv <= 80) {
@@ -94,6 +97,7 @@ export default function MacroStressTesting() {
         </div>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {/* Mortgage Amount */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Mortgage Amount (€)
@@ -101,12 +105,22 @@ export default function MacroStressTesting() {
             <input
               type="number"
               min="1"
+              step="1"
               value={loanAmount}
-              onChange={(e) => setLoanAmount(Math.max(0, Number(e.target.value)))}
+              onChange={(e) => {
+                const value = Number(e.target.value)
+                if (Number.isFinite(value)) {
+                  setLoanAmount(Math.max(1, value))
+                }
+              }}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-al-navy focus:ring-1 focus:ring-al-navy"
             />
+            <p className="mt-1 text-xs text-gray-400">
+              Must be greater than €0.
+            </p>
           </div>
 
+          {/* Property Value */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Property Value (€)
@@ -114,14 +128,22 @@ export default function MacroStressTesting() {
             <input
               type="number"
               min="1"
+              step="1"
               value={propertyValue}
-              onChange={(e) =>
-                setPropertyValue(Math.max(0, Number(e.target.value)))
-              }
+              onChange={(e) => {
+                const value = Number(e.target.value)
+                if (Number.isFinite(value)) {
+                  setPropertyValue(Math.max(1, value))
+                }
+              }}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-al-navy focus:ring-1 focus:ring-al-navy"
             />
+            <p className="mt-1 text-xs text-gray-400">
+              Must be greater than €0.
+            </p>
           </div>
 
+          {/* Interest Rate */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Annual Interest Rate (%)
@@ -132,13 +154,20 @@ export default function MacroStressTesting() {
               max="30"
               step="0.1"
               value={interestRate}
-              onChange={(e) =>
-                setInterestRate(Math.max(0, Number(e.target.value)))
-              }
+              onChange={(e) => {
+                const value = Number(e.target.value)
+                if (Number.isFinite(value)) {
+                  setInterestRate(clampValue(value, 0, 30))
+                }
+              }}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-al-navy focus:ring-1 focus:ring-al-navy"
             />
+            <p className="mt-1 text-xs text-gray-400">
+              Between 0% and 30%.
+            </p>
           </div>
 
+          {/* Loan Term */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Loan Term (Years)
@@ -147,12 +176,21 @@ export default function MacroStressTesting() {
               type="number"
               min="1"
               max="40"
+              step="1"
               value={loanTerm}
-              onChange={(e) =>
-                setLoanTerm(Math.max(1, Number(e.target.value)))
-              }
+              onChange={(e) => {
+                const value = Number(e.target.value)
+                if (Number.isFinite(value)) {
+                  setLoanTerm(
+                    clampValue(Math.round(value), 1, 40)
+                  )
+                }
+              }}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-al-navy focus:ring-1 focus:ring-al-navy"
             />
+            <p className="mt-1 text-xs text-gray-400">
+              Whole years only, between 1 and 40.
+            </p>
           </div>
         </div>
       </Card>
@@ -221,7 +259,11 @@ export default function MacroStressTesting() {
               max="30"
               step="1"
               value={propertyDecrease}
-              onChange={(e) => setPropertyDecrease(Number(e.target.value))}
+              onChange={(e) =>
+                setPropertyDecrease(
+                  clampValue(Number(e.target.value), 0, 30)
+                )
+              }
               className="w-full cursor-pointer accent-al-navy"
             />
 
@@ -261,13 +303,15 @@ export default function MacroStressTesting() {
 
             return (
               <Card key={scenario.interestRateIncrease}>
+                {/* Scenario Header */}
                 <div className="mb-4 flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-500">
                       Stress Scenario
                     </p>
                     <h3 className="text-2xl font-bold text-gray-900">
-                      +{scenario.interestRateIncrease.toFixed(0)}%
+                      +{scenario.interestRateIncrease.toFixed(0)} percentage point
+                      {scenario.interestRateIncrease !== 1 ? 's' : ''}
                     </h3>
                   </div>
 
@@ -276,32 +320,98 @@ export default function MacroStressTesting() {
                   </span>
                 </div>
 
+                {/* Interest Rate */}
                 <div className="space-y-4">
                   <div>
                     <p className="text-xs text-gray-500">
                       New Annual Interest Rate
                     </p>
                     <p className="mt-1 text-lg font-semibold text-gray-900">
-                      {scenario.stressedInterestRate.toFixed(2)}%
+                      {interestRate.toFixed(1)}% → {scenario.stressedInterestRate.toFixed(1)}%
                     </p>
                   </div>
 
+                  {/* Original vs Stressed Comparison */}
+                  <div className="border-t border-gray-100 pt-4">
+                    <h4 className="mb-3 text-sm font-semibold text-gray-900">
+                      Original vs Stressed Position
+                    </h4>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-lg bg-gray-50 p-3">
+                        <p className="mb-2 text-xs font-medium text-gray-500">
+                          Original
+                        </p>
+
+                        <p className="text-xs text-gray-500">
+                          Monthly Repayment
+                        </p>
+                        <p className="mb-3 font-semibold text-gray-900">
+                          {formatCurrency(currentRepayment)}
+                        </p>
+
+                        <p className="text-xs text-gray-500">
+                          Property Value
+                        </p>
+                        <p className="mb-3 font-semibold text-gray-900">
+                          {formatCurrency(propertyValue)}
+                        </p>
+
+                        <p className="text-xs text-gray-500">
+                          LTV
+                        </p>
+                        <p className="font-semibold text-gray-900">
+                          {formatPercentage(currentLTV)}
+                        </p>
+                      </div>
+
+                      <div className="rounded-lg bg-red-50 p-3">
+                        <p className="mb-2 text-xs font-medium text-red-700">
+                          Stressed
+                        </p>
+
+                        <p className="text-xs text-gray-500">
+                          Monthly Repayment
+                        </p>
+                        <p className="mb-3 font-semibold text-gray-900">
+                          {formatCurrency(scenario.monthlyRepayment)}
+                        </p>
+
+                        <p className="text-xs text-gray-500">
+                          Property Value
+                        </p>
+                        <p className="mb-3 font-semibold text-gray-900">
+                          {formatCurrency(scenario.stressedPropertyValue)}
+                        </p>
+
+                        <p className="text-xs text-gray-500">
+                          LTV
+                        </p>
+                        <p className="font-semibold text-gray-900">
+                          {formatPercentage(scenario.stressedLTV)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Repayment Increase */}
                   <div className="border-t border-gray-100 pt-4">
                     <p className="text-xs text-gray-500">
-                      New Monthly Repayment
+                      Monthly Repayment Increase
                     </p>
-                    <p className="mt-1 text-xl font-bold text-gray-900">
-                      {formatCurrency(scenario.monthlyRepayment)}
+                    <p className="mt-1 text-xl font-bold text-red-600">
+                      +{formatCurrency(scenario.repaymentIncrease)}
                     </p>
                     <p className="mt-1 text-sm font-medium text-red-600">
-                      +{formatCurrency(scenario.repaymentIncrease)} per month
+                      {formatPercentage(scenario.repaymentPercentageIncrease)} increase
                     </p>
                   </div>
 
+                  {/* Stressed LTV Status */}
                   <div className="border-t border-gray-100 pt-4">
                     <div className="flex items-center justify-between">
                       <p className="text-xs text-gray-500">
-                        Stressed LTV
+                        Stressed LTV Indicator
                       </p>
                       <span
                         className={`rounded-full px-2 py-1 text-xs font-medium ${ltvStatus.className}`}
@@ -309,25 +419,17 @@ export default function MacroStressTesting() {
                         {ltvStatus.label}
                       </span>
                     </div>
-
-                    <p className="mt-1 text-xl font-bold text-gray-900">
-                      {formatPercentage(scenario.stressedLTV)}
-                    </p>
-                  </div>
-
-                  <div className="border-t border-gray-100 pt-4">
-                    <p className="text-xs text-gray-500">
-                      Property Value After Stress
-                    </p>
-                    <p className="mt-1 font-semibold text-gray-900">
-                      {formatCurrency(scenario.stressedPropertyValue)}
-                    </p>
                   </div>
                 </div>
               </Card>
             )
           })}
         </div>
+
+        <p className="mt-3 text-xs text-gray-400">
+          LTV risk categories are illustrative indicators only. They do not
+          represent actual lender policies or formal lending criteria.
+        </p>
       </div>
 
       {/* Summary */}
@@ -344,7 +446,8 @@ export default function MacroStressTesting() {
             >
               <div>
                 <p className="font-medium text-gray-900">
-                  +{scenario.interestRateIncrease.toFixed(0)}% Interest Rate
+                  +{scenario.interestRateIncrease.toFixed(0)} percentage point
+                  {scenario.interestRateIncrease !== 1 ? 's' : ''}
                 </p>
                 <p className="text-xs text-gray-500">
                   Monthly repayment increase
