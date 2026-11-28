@@ -7,9 +7,12 @@ export type ApplicationStatus =
   | 'Applied'
   | 'AI Deliberated'
   | 'Underwriter Approved'
+  | 'Conditionally Approved'
+  | 'Declined'
   | 'Funded'
   | 'Closed'
 
+  
 // Structure used by the frontend.
 export interface Application {
   id: string

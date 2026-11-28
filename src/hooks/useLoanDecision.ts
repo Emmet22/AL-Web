@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 
 import { getApplicationById } from '../services/applicationService'
+import { submitApplicationDecision } from '../services/api'
+
 import type { Application } from '../types/application'
 
 import {
@@ -18,8 +20,11 @@ export function useLoanDecision(id: string | undefined) {
   const [conditions, setConditions] = useState('')
 
   const [validationError, setValidationError] = useState<string | null>(null)
+  const [submissionError, setSubmissionError] = useState<string | null>(null)
+
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   // Fetch application data.
   useEffect(() => {
@@ -73,6 +78,7 @@ export function useLoanDecision(id: string | undefined) {
   function selectDecision(value: Decision) {
     setDecision(value)
     setValidationError(null)
+    setSubmissionError(null)
     setConfirmed(false)
 
     if (value !== 'Conditionally Approve') {
@@ -90,18 +96,63 @@ export function useLoanDecision(id: string | undefined) {
     }
 
     setValidationError(null)
+    setSubmissionError(null)
     setShowConfirmation(true)
   }
 
   // Close the confirmation modal.
   function closeConfirmation() {
+    if (submitting) return
+
     setShowConfirmation(false)
+    setSubmissionError(null)
   }
 
-  // Currently demonstration-only.
-  function confirmDecision() {
-    setShowConfirmation(false)
-    setConfirmed(true)
+  // Submit the decision to the Core API.
+  async function confirmDecision() {
+    if (!id || !decision || submitting) return
+
+    try {
+      setSubmitting(true)
+      setSubmissionError(null)
+
+      const outcomeMap = {
+        Approve: 'approved',
+        'Conditionally Approve': 'conditionally_approved',
+        Decline: 'declined',
+      } as const
+
+      const outcome = outcomeMap[decision]
+
+      const result = await submitApplicationDecision(
+        id,
+        outcome,
+        decision === 'Conditionally Approve'
+          ? conditions.trim()
+          : null
+      )
+
+      // Update the application with the backend's confirmed status.
+      setApplication((current) =>
+        current
+          ? { ...current, status: result.status as Application['status'] }
+          : current
+      )
+
+      setShowConfirmation(false)
+      setConfirmed(true)
+
+    } catch (err) {
+      console.error('Failed to submit loan decision:', err)
+
+      setSubmissionError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to submit the decision. Please try again.'
+      )
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return {
@@ -112,9 +163,11 @@ export function useLoanDecision(id: string | undefined) {
     decision,
     conditions,
     validationError,
+    submissionError,
 
     showConfirmation,
     confirmed,
+    submitting,
 
     selectDecision,
     setConditions,

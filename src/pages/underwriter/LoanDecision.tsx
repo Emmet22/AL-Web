@@ -21,9 +21,11 @@ export default function LoanDecision() {
     decision,
     conditions,
     validationError,
+    submissionError,
 
     showConfirmation,
     confirmed,
+    submitting,
 
     selectDecision,
     setConditions,
@@ -100,17 +102,16 @@ export default function LoanDecision() {
 
             <div>
               <h3 className="font-semibold text-green-900">
-                Decision Confirmed
+                Decision Successfully Recorded
               </h3>
 
               <p className="mt-1 text-sm text-green-800">
-                The demonstration decision has been confirmed as:{' '}
+                The application decision has been submitted successfully as:{' '}
                 <strong>{decision}</strong>.
               </p>
 
               <p className="mt-2 text-xs text-green-700">
-                This is currently a frontend demonstration. The decision
-                has not been submitted to the backend.
+                The application status has been updated.
               </p>
             </div>
           </div>
@@ -147,6 +148,8 @@ export default function LoanDecision() {
         <DecisionConfirmationModal
           decision={decision}
           conditions={conditions}
+          submitting={submitting}
+          submissionError={submissionError}
           onCancel={closeConfirmation}
           onConfirm={confirmDecision}
         />
